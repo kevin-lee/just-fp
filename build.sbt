@@ -30,6 +30,9 @@ lazy val root = (project in file("."))
             option != "-Ywarn-unused-import" && option != "-Ywarn-numeric-widen"
           )
     }.distinct
+
+  , resolvers += Resolver.sonatypeRepo("releases")
+  , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.0" cross CrossVersion.binary)
   , wartremoverErrors in (Compile, compile) ++= commonWarts
   , wartremoverErrors in (Test, compile) ++= commonWarts
   , resolvers += hedgehogRepo
