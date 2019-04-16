@@ -14,8 +14,8 @@ trait Applicative[F[_]] extends Functor[F] {
 
 object Applicative {
 
-  implicit def applicativeEither[L]: Applicative[({ type AA[A] = Either[L, A] })#AA] =
-    new Applicative[({ type AA[A] = Either[L, A] })#AA] {
+  implicit def applicativeEither[L]: Applicative[Either[L, ?]] =
+    new Applicative[Either[L, ?]] {
       def pure[A](a: => A): Either[L, A] = Right(a)
 
       def map[A, B](fa: Either[L, A])(f: A => B): Either[L, B] =

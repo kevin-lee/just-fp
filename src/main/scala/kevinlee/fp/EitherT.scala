@@ -46,7 +46,7 @@ object EitherT extends EitherTMonadInstance {
 }
 
 sealed abstract class EitherTMonadInstance {
-  implicit def eitherTMonad[F[_], A](implicit F0: Monad[F]): Monad[({ type AA[B] = EitherT[F, A, B] })#AA] = new Monad[({ type AA[B] = EitherT[F, A, B] })#AA] {
+  implicit def eitherTMonad[F[_], A](implicit F0: Monad[F]): Monad[EitherT[F, A, ?]] = new Monad[EitherT[F, A, ?]] {
 
     implicit val F: Monad[F] = F0
 

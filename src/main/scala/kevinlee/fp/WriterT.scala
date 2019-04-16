@@ -42,7 +42,7 @@ object WriterT extends WriterTMonadInstance {
 
 sealed abstract class WriterTMonadInstance extends WriterInstance {
 
-  implicit def writerTMonad[F[_], W](implicit F0: Monad[F], S0: Monoid[W]): Monad[({ type AA[C] = WriterT[F, W, C] })#AA] = new Monad[({ type AA[C] = WriterT[F, W, C] })#AA] {
+  implicit def writerTMonad[F[_], W](implicit F0: Monad[F], S0: Monoid[W]): Monad[WriterT[F, W, ?]] = new Monad[WriterT[F, W, ?]] {
     implicit val F: Monad[F] = F0
     implicit val S: Monoid[W] = S0
 
@@ -55,7 +55,7 @@ sealed abstract class WriterTMonadInstance extends WriterInstance {
 
 sealed abstract class WriterInstance {
 
-  implicit def writerMonad[W](implicit S0: Monoid[W]): Monad[({ type AA[A] = WriterT[Id, W, A] })#AA] = new Monad[({ type AA[A] = WriterT[Id, W, A] })#AA] {
+  implicit def writerMonad[W](implicit S0: Monoid[W]): Monad[WriterT[Id, W, ?]] = new Monad[WriterT[Id, W, ?]] {
     implicit val F: Monad[Id] = idMonad
     implicit val S: Monoid[W] = S0
 
