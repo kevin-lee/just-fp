@@ -9,6 +9,7 @@ ThisBuild / version          := ProjectVersion
 ThisBuild / organization     := "kevinlee"
 
 lazy val justFp = (project in file("."))
+  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := "just-fp"
   , description  := "Just FP Lib"
