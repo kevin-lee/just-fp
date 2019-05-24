@@ -48,6 +48,7 @@ lazy val root = (project in file("."))
   /* Bintray { */
   , bintrayPackageLabels := Seq("Scala", "Functional Programming", "FP")
   , bintrayVcsUrl := Some("""git@github.com:Kevin-Lee/just-fp.git""")
+  , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
   /* } Bintray */
 
   , initialCommands in console := """import kevinlee.fp._"""
