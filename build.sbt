@@ -4,19 +4,17 @@ import kevinlee.sbt.SbtCommon.crossVersionProps
 import kevinlee.semver.{Major, Minor, SemanticVersion}
 import org.scoverage.coveralls.Imports.CoverallsKeys.coverallsTokenFile
 
-ThisBuild / scalaVersion     := "2.12.8"
-ThisBuild / version          := "0.1.0"
+ThisBuild / scalaVersion     := ProjectScalaVersion
+ThisBuild / version          := ProjectVersion
 ThisBuild / organization     := "kevinlee"
 
-lazy val root = (project in file("."))
+lazy val justFp = (project in file("."))
   .settings(
     name := "just-fp"
-  , scalaVersion := ProjectScalaVersion
-  , version      := ProjectVersion
   , description  := "Just FP Lib"
   , developers   := List(
-    Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
-  )
+      Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
+    )
   , crossScalaVersions := CrossScalaVersions
   , scalacOptions :=
     crossVersionProps(Seq.empty, SemanticVersion.parseUnsafe(scalaVersion.value)) {
@@ -38,11 +36,11 @@ lazy val root = (project in file("."))
   , resolvers += hedgehogRepo
   , libraryDependencies ++= hedgehogLibs
   , dependencyOverrides ++= crossVersionProps(Seq.empty[ModuleID], SemanticVersion.parseUnsafe(scalaVersion.value)) {
-    case (Major(2), Minor(10)) =>
-      Seq("org.wartremover" %% "wartremover" % "2.3.7")
-    case x =>
-      Seq.empty
-  }
+      case (Major(2), Minor(10)) =>
+        Seq("org.wartremover" %% "wartremover" % "2.3.7")
+      case x =>
+        Seq.empty
+    }
   , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
 
   /* Bintray { */
