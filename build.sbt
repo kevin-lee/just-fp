@@ -5,7 +5,7 @@ import kevinlee.semver.{Major, Minor, SemanticVersion}
 import org.scoverage.coveralls.Imports.CoverallsKeys.coverallsTokenFile
 
 ThisBuild / scalaVersion     := "2.12.8"
-ThisBuild / version          := "0.1.0-SNAPSHOT"
+ThisBuild / version          := "0.1.0"
 ThisBuild / organization     := "kevinlee"
 
 lazy val root = (project in file("."))
