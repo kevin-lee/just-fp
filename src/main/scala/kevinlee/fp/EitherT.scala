@@ -1,6 +1,6 @@
 package kevinlee.fp
 
-import EitherOps._
+import Implicits.{leftOps, rightOps}
 
 /**
   * @author Kevin Lee

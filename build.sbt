@@ -1,4 +1,3 @@
-import Dependencies._
 import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import kevinlee.semver.{Major, Minor, SemanticVersion}
@@ -34,8 +33,8 @@ lazy val justFp = (project in file("."))
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.0" cross CrossVersion.binary)
   , wartremoverErrors in (Compile, compile) ++= commonWarts
   , wartremoverErrors in (Test, compile) ++= commonWarts
-  , resolvers += hedgehogRepo
-  , libraryDependencies ++= hedgehogLibs
+  , resolvers += Deps.hedgehogRepo
+  , libraryDependencies ++= Deps.hedgehogLibs
   , dependencyOverrides ++= crossVersionProps(Seq.empty[ModuleID], SemanticVersion.parseUnsafe(scalaVersion.value)) {
       case (Major(2), Minor(10)) =>
         Seq("org.wartremover" %% "wartremover" % "2.3.7")
