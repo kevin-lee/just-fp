@@ -9,7 +9,7 @@ object ProjectInfo {
   val ProjectScalaVersion: String = "2.12.8"
   val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", ProjectScalaVersion)
 
-  val ProjectVersion: String = "0.1.0"
+  val ProjectVersion: String = "0.2.0"
 
   val commonScalacOptions: Seq[String] = Seq(
       "-deprecation"
