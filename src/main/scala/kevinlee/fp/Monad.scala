@@ -35,4 +35,18 @@ trait Monad[M[_]] extends Applicative[M] {
     def associativity[A, B, C](a: M[A], f: A => M[B], g: B => M[C])(implicit MC: Equal[M[C]]): Boolean =
       MC.equal(flatMap(flatMap(a)(f))(g), flatMap(a)(x => flatMap(f(x))(g)))
   }
+
+  def monadLaw: MonadLaw = new MonadLaw {}
+}
+
+object Monad extends ListMonadInstance
+
+trait ListMonadInstance {
+  implicit val listMonad: Monad[List] = new Monad[List] {
+    override def flatMap[A, B](ma: List[A])(f: A => List[B]): List[B] =
+      ma.flatMap(f)
+
+    override def pure[A](a: => A): List[A] =
+      List(a)
+  }
 }

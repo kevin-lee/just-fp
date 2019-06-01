@@ -48,6 +48,8 @@ trait Applicative[F[_]] extends Functor[F] {
       , ap(ap(fa)(g))(f)
       )
   }
+
+  def applicativeLaw: ApplicativeLaw = new ApplicativeLaw {}
 }
 
 object Applicative {
