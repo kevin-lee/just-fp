@@ -39,7 +39,7 @@ trait Monad[M[_]] extends Applicative[M] {
   def monadLaw: MonadLaw = new MonadLaw {}
 }
 
-object Monad extends ListMonadInstance
+object Monad extends ListMonadInstance with VectorMonadInstance
 
 trait ListMonadInstance {
   implicit val listMonad: Monad[List] = new Monad[List] {
@@ -48,5 +48,15 @@ trait ListMonadInstance {
 
     override def pure[A](a: => A): List[A] =
       List(a)
+  }
+}
+
+trait VectorMonadInstance {
+  implicit val vectorMonad: Monad[Vector] = new Monad[Vector] {
+    override def flatMap[A, B](ma: Vector[A])(f: A => Vector[B]): Vector[B] =
+      ma.flatMap(f)
+
+    override def pure[A](a: => A): Vector[A] =
+      Vector(a)
   }
 }
