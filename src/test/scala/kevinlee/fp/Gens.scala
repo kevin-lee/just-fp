@@ -11,6 +11,8 @@ object Gens {
   def genInts(from: Int, to: Int): Gen[Int] =
     Gen.int(Range.linear(from, to))
 
+  def genIntFromMinToMax: Gen[Int] = Gens.genInts(Int.MinValue, Int.MaxValue)
+
   def genIntToInt: Gen[Int => Int] =
     Gen.element1[Int => Int](identity[Int], x => x + x, x => x * 100, x => x + 100, x => x - 100)
 
@@ -23,4 +25,9 @@ object Gens {
   def genVector[A](genA: Gen[A], length: Int): Gen[Vector[A]] =
     genA.list(Range.linear(0, length)).map(_.toVector)
 
+  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
+  def genFuture[A](
+    genInt: Gen[A])(
+    implicit ex: scala.concurrent.ExecutionContext): Gen[scala.concurrent.Future[A]] =
+    genInt.map(n => scala.concurrent.Future(n))
 }
