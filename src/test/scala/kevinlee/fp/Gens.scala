@@ -14,10 +14,13 @@ object Gens {
   def genIntToInt: Gen[Int => Int] =
     Gen.element1[Int => Int](identity[Int], x => x + x, x => x * 100, x => x + 100, x => x - 100)
 
+  def genAToMonadA[M[_], A](genF: Gen[A => A])(implicit m: Monad[M]): Gen[A => M[A]] =
+    genF.map(f => x => m.pure(f(x)))
+
   def genList[A](genA: Gen[A], length: Int): Gen[List[A]] =
     genA.list(Range.linear(0, length))
 
-  def genAToMonadA[M[_], A](genF: Gen[A => A])(implicit m: Monad[M]): Gen[A => M[A]] =
-    genF.map(f => x => m.pure(f(x)))
+  def genVector[A](genA: Gen[A], length: Int): Gen[Vector[A]] =
+    genA.list(Range.linear(0, length)).map(_.toVector)
 
 }
