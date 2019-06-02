@@ -1,5 +1,7 @@
 package kevinlee.fp
 
+import scala.concurrent.ExecutionContext
+
 /**
   * @author Kevin Lee
   * @since 2019-03-16
@@ -26,14 +28,26 @@ trait Functor[F[_]] {
   def functorLaw: FunctorLaw = new FunctorLaw {}
 }
 
-object Functor {
+object Functor extends ListFunctor with VectorFunctor with FutureFunctor
 
+trait ListFunctor {
   implicit val listFunctor: Functor[List] = new Functor[List] {
     def map[A, B](fa: List[A])(f: A => B): List[B] = fa.map(f)
   }
+}
 
+trait VectorFunctor {
   implicit val vectorFunctor: Functor[Vector] = new Functor[Vector] {
     def map[A, B](fa: Vector[A])(f: A => B): Vector[B] = fa.map(f)
   }
+}
 
+trait FutureFunctor {
+  import scala.concurrent.Future
+
+  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
+  implicit def futureFunctor(implicit ex: ExecutionContext): Functor[Future] =
+    new Functor[Future] {
+      def map[A, B](fa: Future[A])(f: A => B): Future[B] = fa.map(f)
+    }
 }

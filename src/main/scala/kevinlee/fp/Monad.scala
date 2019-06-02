@@ -71,6 +71,7 @@ trait VectorMonadInstance {
       Vector(a)
   }
 }
+
 trait FutureMonadInstance {
   import scala.concurrent.{ExecutionContext, Future}
 
