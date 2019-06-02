@@ -39,7 +39,18 @@ trait Monad[M[_]] extends Applicative[M] {
   def monadLaw: MonadLaw = new MonadLaw {}
 }
 
-object Monad extends ListMonadInstance with VectorMonadInstance with FutureMonadInstance
+object Monad extends IdInstance with ListMonadInstance with VectorMonadInstance with FutureMonadInstance
+
+trait IdInstance {
+
+  implicit val idMonad: Monad[Id] = new Monad[Id] {
+
+    def flatMap[A, B](a: A)(f: A => B): B = f(a)
+
+    def pure[A](a: => A): A = a
+  }
+
+}
 
 trait ListMonadInstance {
   implicit val listMonad: Monad[List] = new Monad[List] {

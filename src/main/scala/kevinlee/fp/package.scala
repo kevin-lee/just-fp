@@ -6,6 +6,8 @@ package kevinlee
   */
 package object fp extends IdInstance {
 
+  type Id[X] = X
+
   type Writer[L, V] = WriterT[Id, L, V]
 
   object Writer {
