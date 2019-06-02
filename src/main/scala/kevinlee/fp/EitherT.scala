@@ -41,9 +41,7 @@ final case class EitherT[F[_], A, B](run: F[Either[A, B]]) {
 
 }
 
-object EitherT extends EitherTMonadInstance {
-  def eitherT[F[_], A, B](either: F[Either[A, B]]): EitherT[F, A, B] = apply(either)
-}
+object EitherT extends EitherTMonadInstance
 
 sealed abstract class EitherTMonadInstance {
   implicit def eitherTMonad[F[_], A](implicit F0: Monad[F]): Monad[EitherT[F, A, ?]] = new Monad[EitherT[F, A, ?]] {
