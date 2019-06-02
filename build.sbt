@@ -30,7 +30,7 @@ lazy val justFp = (project in file("."))
     }.distinct
 
   , resolvers += Resolver.sonatypeRepo("releases")
-  , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.0" cross CrossVersion.binary)
+  , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.1" cross CrossVersion.binary)
   , wartremoverErrors in (Compile, compile) ++= commonWarts
   , wartremoverErrors in (Test, compile) ++= commonWarts
   , resolvers += Deps.hedgehogRepo
