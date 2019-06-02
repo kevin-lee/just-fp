@@ -7,6 +7,27 @@ import hedgehog._
   * @since 2019-06-01
   */
 object Specs {
+
+  object functorLaws {
+    def laws[F[_]](
+        genM: Gen[F[Int]]
+      , genF: Gen[Int => Int]
+      )(implicit functor: Functor[F]
+      , åeqM: Equal[F[Int]]
+      ): Property = for {
+      m <- genM.log("m: F[Int]")
+      f <- genF.log("f: Int => Int")
+      f2 <- genF.log("f2: Int => Int")
+    } yield {
+      Result.all(List(
+        (functor.functorLaw.identity[Int](m) ==== true)
+          .log("functorLaw.identity")
+      , (functor.functorLaw.composition[Int, Int, Int](m, f, f2) ==== true)
+          .log("functorLaw.composition")
+      ))
+    }
+  }
+
   object monadLaws {
     def laws[M[_]](
         genM: Gen[M[Int]]
