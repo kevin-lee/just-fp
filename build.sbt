@@ -43,6 +43,10 @@ lazy val justFp = (project in file("."))
     }
   , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
 
+  /* GitHub Release { */
+  , gitTagFrom := "master"
+  /* } GitHub Release */
+
   /* Bintray { */
   , bintrayPackageLabels := Seq("Scala", "Functional Programming", "FP")
   , bintrayVcsUrl := Some("""git@github.com:Kevin-Lee/just-fp.git""")
