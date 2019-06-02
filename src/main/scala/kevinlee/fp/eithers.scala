@@ -9,17 +9,12 @@ import scala.language.implicitConversions
   * @since 2019-03-30
   */
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
-object EitherOps {
+object EitherOps extends EitherFunctions {
 
   final class ToEither[X](val x: X) extends AnyVal {
     def left[B]: Either[X, B] = Left(x)
     def right[A]: Either[A, X] = Right(x)
   }
-
-  def left[A, B](a: A): Either[A, B] = Left(a)
-  def right[A, B](b: B): Either[A, B] = Right(b)
-  def castR[A, B, C](l: Left[A, B]): Either[A, C] = l.asInstanceOf[Either[A, C]]
-  def castL[A, B, C](r: Right[A, B]): Either[C, B] = r.asInstanceOf[Either[C, B]]
 
   final class LeftOps[A, B](val l: Left[A, B]) extends AnyVal {
     def castR[C]: Either[A, C] = EitherOps.castR(l)
@@ -151,14 +146,22 @@ object EitherOps {
   }
 }
 
+trait EitherFunctions {
+  def left[A, B](a: A): Either[A, B] = Left(a)
+  def right[A, B](b: B): Either[A, B] = Right(b)
+
+  @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
+  def castR[A, B, C](l: Left[A, B]): Either[A, C] = l.asInstanceOf[Either[A, C]]
+
+  @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
+  def castL[A, B, C](r: Right[A, B]): Either[C, B] = r.asInstanceOf[Either[C, B]]
+}
+
 @SuppressWarnings(Array("org.wartremover.warts.ImplicitConversion"))
 trait EitherImplicits {
   import EitherOps._
 
   implicit def toEither[X](x: X): ToEither[X] = new ToEither[X](x)
-
-  def left[A, B](a: A): Either[A, B] = EitherOps.left(a)
-  def right[A, B](b: B): Either[A, B] = EitherOps.right(b)
 
   implicit def leftOps[A, B](l: Left[A, B]): LeftOps[A, B] = new LeftOps(l)
 

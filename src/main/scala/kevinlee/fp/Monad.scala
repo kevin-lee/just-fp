@@ -35,4 +35,51 @@ trait Monad[M[_]] extends Applicative[M] {
     def associativity[A, B, C](a: M[A], f: A => M[B], g: B => M[C])(implicit MC: Equal[M[C]]): Boolean =
       MC.equal(flatMap(flatMap(a)(f))(g), flatMap(a)(x => flatMap(f(x))(g)))
   }
+
+  def monadLaw: MonadLaw = new MonadLaw {}
+}
+
+object Monad extends IdInstance with ListMonadInstance with VectorMonadInstance with FutureMonadInstance
+
+trait IdInstance {
+
+  implicit val idMonad: Monad[Id] = new Monad[Id] {
+
+    def flatMap[A, B](a: A)(f: A => B): B = f(a)
+
+    def pure[A](a: => A): A = a
+  }
+
+}
+
+trait ListMonadInstance {
+  implicit val listMonad: Monad[List] = new Monad[List] {
+    override def flatMap[A, B](ma: List[A])(f: A => List[B]): List[B] =
+      ma.flatMap(f)
+
+    override def pure[A](a: => A): List[A] =
+      List(a)
+  }
+}
+
+trait VectorMonadInstance {
+  implicit val vectorMonad: Monad[Vector] = new Monad[Vector] {
+    override def flatMap[A, B](ma: Vector[A])(f: A => Vector[B]): Vector[B] =
+      ma.flatMap(f)
+
+    override def pure[A](a: => A): Vector[A] =
+      Vector(a)
+  }
+}
+trait FutureMonadInstance {
+  import scala.concurrent.{ExecutionContext, Future}
+
+  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
+  implicit def futureMonad(implicit ex: ExecutionContext): Monad[Future] = new Monad[Future] {
+    override def flatMap[A, B](ma: Future[A])(f: A => Future[B]): Future[B] =
+      ma.flatMap(f)
+
+    override def pure[A](a: => A): Future[A] =
+      Future(a)
+  }
 }

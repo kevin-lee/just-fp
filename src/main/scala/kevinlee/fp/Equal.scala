@@ -44,9 +44,17 @@ trait Equal[F] {
   }
 }
 
-object Equal {
+object Equal extends ListEqualInstance with VectorEqualInstance {
   def equalA[A]: Equal[A] = new Equal[A] {
     @SuppressWarnings(Array("org.wartremover.warts.Equals"))
     def equal(x: A, y: A): Boolean = x == y
   }
+}
+
+trait ListEqualInstance {
+  implicit def listEqual[A]: Equal[List[A]]= Equal.equalA[List[A]]
+}
+
+trait VectorEqualInstance {
+  implicit def vectorEqual[A]: Equal[Vector[A]]= Equal.equalA[Vector[A]]
 }

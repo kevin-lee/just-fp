@@ -22,6 +22,8 @@ trait Functor[F[_]] {
     def composition[A, B, C](fa: F[A], f: B => C, g: A => B)(implicit FC: Equal[F[C]]): Boolean =
       FC.equal(map(fa)(f compose g), map(map(fa)(g))(f))
   }
+
+  def functorLaw: FunctorLaw = new FunctorLaw {}
 }
 
 object Functor {
