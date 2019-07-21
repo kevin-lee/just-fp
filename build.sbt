@@ -17,7 +17,19 @@ lazy val justFp = (project in file("."))
     )
   , crossScalaVersions := CrossScalaVersions
   , scalacOptions :=
-    crossVersionProps(Seq.empty, SemanticVersion.parseUnsafe(scalaVersion.value)) {
+    (crossVersionProps(Seq.empty, SemanticVersion.parseUnsafe(scalaVersion.value)) {
+      case (Major(2), Minor(13)) =>
+        (scalacOptions.value ++ commonScalacOptions2_13)
+          .filterNot { x =>
+            x.startsWith("-Xlint") && x != "-Xlint:_"
+          }
+          .diff(Seq(
+            "-Yno-adapted-args"
+          , "-Ywarn-inaccessible"
+          , "-Ywarn-nullary-override"
+          , "-Ywarn-unused-import"
+          , "-Ywarn-nullary-unit"
+          ))
       case (Major(2), Minor(12)) =>
         scalacOptions.value ++ commonScalacOptions
       case (Major(2), Minor(11)) =>
@@ -27,10 +39,10 @@ lazy val justFp = (project in file("."))
           .filter(option =>
             option != "-Ywarn-unused-import" && option != "-Ywarn-numeric-widen"
           )
-    }.distinct
+    }).distinct
 
   , resolvers += Resolver.sonatypeRepo("releases")
-  , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.1" cross CrossVersion.binary)
+  , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.3" cross CrossVersion.binary)
   , wartremoverErrors in (Compile, compile) ++= commonWarts
   , wartremoverErrors in (Test, compile) ++= commonWarts
   , resolvers += Deps.hedgehogRepo
@@ -65,4 +77,3 @@ lazy val justFp = (project in file("."))
   , coverallsTokenFile := Option(s"""${Path.userHome.absolutePath}/.coveralls-credentials""")
   /* } Coveralls */
 )
-
