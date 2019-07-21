@@ -13,7 +13,7 @@ object Specs {
         genM: Gen[F[Int]]
       , genF: Gen[Int => Int]
       )(implicit functor: Functor[F]
-      , åeqM: Equal[F[Int]]
+      , eqM: Equal[F[Int]]
       ): Property = for {
       m <- genM.log("m: F[Int]")
       f <- genF.log("f: Int => Int")
