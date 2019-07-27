@@ -1,8 +1,7 @@
-package kevinlee.fp
-
-import scala.util.{Either, Right}
+package kevinlee.fp.syntax
 
 import scala.language.implicitConversions
+import scala.util.{Either, Right}
 
 /**
   * @author Kevin Lee
@@ -158,7 +157,7 @@ trait EitherFunctions {
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.ImplicitConversion"))
-trait EitherImplicits {
+trait EitherSyntax {
   import EitherOps._
 
   implicit def toEither[X](x: X): ToEither[X] = new ToEither[X](x)

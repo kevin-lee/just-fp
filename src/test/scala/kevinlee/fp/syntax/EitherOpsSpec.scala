@@ -1,7 +1,8 @@
-package kevinlee.fp
+package kevinlee.fp.syntax
 
 import hedgehog._
 import hedgehog.runner._
+
 
 /**
   * @author Kevin Lee
@@ -9,8 +10,8 @@ import hedgehog.runner._
   */
 object EitherOpsSpec extends Properties {
 
-  object TestImplicits extends EitherImplicits
-  import TestImplicits._
+  object TestSyntax extends EitherSyntax
+  import TestSyntax._
 
   override def tests: List[Prop] = List(
     property("Left(a).foreach should do nothing", testLeftForeach)

@@ -1,6 +1,6 @@
 package kevinlee.fp
 
-import Implicits.{leftOps, rightOps}
+import JustSyntax.{leftOps, rightOps}
 import kevinlee.fp.compat.EitherCompat
 
 /**
