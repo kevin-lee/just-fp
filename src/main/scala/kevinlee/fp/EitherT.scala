@@ -1,6 +1,7 @@
 package kevinlee.fp
 
 import Implicits.{leftOps, rightOps}
+import kevinlee.fp.compat.EitherCompat
 
 /**
   * @author Kevin Lee
@@ -8,7 +9,7 @@ import Implicits.{leftOps, rightOps}
   */
 final case class EitherT[F[_], A, B](run: F[Either[A, B]]) {
   def map[C](f: B => C)(implicit F: Functor[F]): EitherT[F, A, C] =
-    EitherT(F.map(run)(_.right.map(f)))
+    EitherT(F.map(run)(EitherCompat.map(_, f)))
 
   def flatMap[C](f: B => EitherT[F, A, C])(implicit M: Monad[F]): EitherT[F, A, C] =
     EitherT(
