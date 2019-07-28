@@ -1,5 +1,7 @@
 package kevinlee.fp
 
+import kevinlee.fp.instances._
+
 /**
   * @author Kevin Lee
   * @since 2019-04-22
@@ -44,7 +46,22 @@ trait Equal[F] {
   }
 }
 
-object Equal extends ListEqualInstance with VectorEqualInstance {
+object Equal
+  extends NatualEqual
+    with BooleanEqualInstance
+    with IntEqualInstance
+    with ShortEqualInstance
+    with LongEqualInstance
+    with CharEqualInstance
+    with FloatEqualInstance
+    with DoubleEqualInstance
+    with StringEqualInstance
+    with BigIntEqualInstance
+    with BigDecimalEqualInstance
+    with ListEqualInstance
+    with VectorEqualInstance
+
+trait NatualEqual {
   def equalA[A]: Equal[A] = new Equal[A] {
     @SuppressWarnings(Array("org.wartremover.warts.Equals"))
     def equal(x: A, y: A): Boolean = x == y

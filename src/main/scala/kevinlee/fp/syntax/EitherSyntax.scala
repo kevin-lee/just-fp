@@ -22,7 +22,7 @@ object EitherOps extends EitherFunctions {
     def castL[C]: Either[C, B] = EitherOps.castL(r)
   }
 
-  final class RightBiasedEither[A, B](val e: Either[A, B]) extends AnyVal {
+  final class RightBiasedEither[A, B] private[fp] (val e: Either[A, B]) extends AnyVal {
     /** Executes the given side-effecting function if this is a `Right`.
       *
       *  {{{
