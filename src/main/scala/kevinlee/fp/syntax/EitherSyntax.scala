@@ -113,7 +113,7 @@ object EitherOps extends EitherFunctions {
     def filter(f: B => Boolean): Option[Either[A, B]] = e match {
       case Right(b) =>
         if (f(b)) Some(Right(b)) else None
-      case Left(a) =>
+      case Left(_) =>
         None
     }
 
