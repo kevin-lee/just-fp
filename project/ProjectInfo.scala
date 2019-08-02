@@ -6,40 +6,10 @@ import wartremover.WartRemover.autoImport.{Wart, Warts}
   */
 object ProjectInfo {
 
-  val ProjectScalaVersion: String = "2.12.8"
-  val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", ProjectScalaVersion, "2.13.0")
+  val ProjectScalaVersion: String = "2.13.0"
+  val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.8", ProjectScalaVersion)
 
   val ProjectVersion: String = "0.4.0"
-
-  val commonScalacOptions: Seq[String] = Seq(
-      "-deprecation"
-    , "-unchecked"
-    , "-feature"
-    , "-Ywarn-value-discard"
-    , "-Yno-adapted-args"
-    , "-Xlint"
-    , "-Xfatal-warnings"
-    , "-Ywarn-dead-code"
-    , "-Ywarn-inaccessible"
-    , "-Ywarn-nullary-unit"
-    , "-Ywarn-nullary-override"
-    , "-encoding", "UTF-8"
-    , "-Ywarn-unused-import"
-    , "-Ywarn-numeric-widen"
-  )
-
-  val commonScalacOptions2_13: Seq[String] = Seq(
-      "-deprecation"
-    , "-unchecked"
-    , "-feature"
-    , "-Ywarn-value-discard"
-    , "-Xlint:_"
-    , "-language:higherKinds"
-    , "-Xfatal-warnings"
-    , "-Ywarn-dead-code"
-    , "-encoding", "UTF-8"
-    , "-Ywarn-numeric-widen"
-  )
 
   val commonWarts: Seq[wartremover.Wart] = Warts.allBut(Wart.DefaultArguments, Wart.Overloading, Wart.Any, Wart.Nothing, Wart.NonUnitStatements)
 

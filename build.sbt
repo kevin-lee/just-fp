@@ -16,31 +16,6 @@ lazy val justFp = (project in file("."))
       Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
     )
   , crossScalaVersions := CrossScalaVersions
-  , scalacOptions :=
-    (crossVersionProps(Seq.empty, SemanticVersion.parseUnsafe(scalaVersion.value)) {
-      case (Major(2), Minor(13)) =>
-        (scalacOptions.value ++ commonScalacOptions2_13)
-          .filterNot { x =>
-            x.startsWith("-Xlint") && x != "-Xlint:_"
-          }
-          .diff(Seq(
-            "-Yno-adapted-args"
-          , "-Ywarn-inaccessible"
-          , "-Ywarn-nullary-override"
-          , "-Ywarn-unused-import"
-          , "-Ywarn-nullary-unit"
-          ))
-      case (Major(2), Minor(12)) =>
-        scalacOptions.value ++ commonScalacOptions
-      case (Major(2), Minor(11)) =>
-        (scalacOptions.value ++ commonScalacOptions).filter(_ != "-Ywarn-unused-import")
-      case _ =>
-        (scalacOptions.value ++ commonScalacOptions)
-          .filter(option =>
-            option != "-Ywarn-unused-import" && option != "-Ywarn-numeric-widen"
-          )
-    }).distinct
-
   , resolvers += Resolver.sonatypeRepo("releases")
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.3" cross CrossVersion.binary)
   , wartremoverErrors in (Compile, compile) ++= commonWarts
