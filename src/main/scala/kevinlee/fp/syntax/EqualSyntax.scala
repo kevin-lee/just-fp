@@ -9,11 +9,11 @@ import scala.language.implicitConversions
   * @since 2019-07-28
   */
 object EqualSyntax {
-  final class EqualOps[A] private[syntax] (val value: A) extends AnyVal {
-    def ===(other: A)(implicit E: Equal[A]): Boolean =
-      E.equal(value, other)
-    def !==(other: A)(implicit E: Equal[A]): Boolean =
-      !E.equal(value, other)
+  final class EqualOps[A] private[syntax] (val eqLeft: A) extends AnyVal {
+    def ===(eqRight: A)(implicit E: Equal[A]): Boolean =
+      E.equal(eqLeft, eqRight)
+    def !==(eqRight: A)(implicit E: Equal[A]): Boolean =
+      !E.equal(eqLeft, eqRight)
   }
 }
 
@@ -21,6 +21,6 @@ object EqualSyntax {
 trait EqualSyntax {
   import EqualSyntax._
 
-  implicit def ToEqualOps[A](value: A): EqualOps[A] =
-    new EqualOps(value)
+  implicit def ToEqualOps[A: Equal](eqLeft: A): EqualOps[A] =
+    new EqualOps(eqLeft)
 }
