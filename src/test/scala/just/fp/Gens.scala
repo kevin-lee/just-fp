@@ -19,6 +19,11 @@ object Gens {
       y <- Gen.boolean.map(z => if (x === z) !z else z)
     } yield (x, y)
 
+  def genByte(from: Byte, to: Byte): Gen[Byte] =
+    Gens.genInt(from.toInt, to.toInt).map(_.toByte)
+
+  def genByteFromMinToMax: Gen[Byte] = Gens.genByte(Byte.MinValue, Byte.MaxValue)
+
   def genInt(from: Int, to: Int): Gen[Int] =
     Gen.int(Range.linear(from, to))
 
@@ -182,7 +187,13 @@ object Gens {
   }
 
   def genBigDecimal: Gen[BigDecimal] =
-    Gen.choice1(genDoubleFromMinToMax.map(BigDecimal(_)), genBigInt.map(BigDecimal(_)))
+    Gen.choice1(
+        /*
+         * MathContext.UNLIMITED should be used due to https://github.com/scala/bug/issues/11590
+         */
+        genDoubleFromMinToMax.map(BigDecimal(_, java.math.MathContext.UNLIMITED))
+      , genBigInt.map(BigDecimal(_, java.math.MathContext.UNLIMITED))
+      )
 
   def genDifferentBigDecimalPair: Gen[(BigDecimal, BigDecimal)] = for {
     n1 <- genBigDecimal
