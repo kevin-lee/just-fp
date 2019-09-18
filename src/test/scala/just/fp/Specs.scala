@@ -8,6 +8,33 @@ import hedgehog._
   */
 object Specs {
 
+  object monoidLaws {
+    def laws[A](
+        genA: Gen[A]
+      )(implicit monoid: Monoid[A]
+      , eqM: Equal[A]
+      ): Property = for {
+      a1 <- genA.log("a1: A")
+      a2 <- genA.log("a2: A")
+      a3 <- genA.log("a3: A")
+    } yield {
+      Result.all(List(
+        Result.assert(
+          monoid.monoidLaw.associativity(monoid, a1, a2, a3)
+        )
+        .log("monoidLaw.associativity")
+      , Result.assert(
+          monoid.monoidLaw.leftIdentity(monoid, a1)
+        )
+        .log("monoidLaw.leftIdentity")
+      , Result.assert(
+          monoid.monoidLaw.rightIdentity(monoid, a1)
+        )
+        .log("monoidLaw.rightIdentity")
+      ))
+    }
+  }
+
   object functorLaws {
     def laws[F[_]](
         genM: Gen[F[Int]]

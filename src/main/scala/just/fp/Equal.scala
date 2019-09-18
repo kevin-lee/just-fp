@@ -52,6 +52,7 @@ object Equal
     with IntEqualInstance
     with ShortEqualInstance
     with LongEqualInstance
+    with ByteEqualInstance
     with CharEqualInstance
     with FloatEqualInstance
     with DoubleEqualInstance
