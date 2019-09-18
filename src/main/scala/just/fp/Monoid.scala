@@ -1,5 +1,7 @@
 package just.fp
 
+import just.fp.SemiGroup.{BigDecimalSemiGroup, BigIntSemiGroup, ByteSemiGroup, CharSemiGroup, IntSemiGroup, ListSemiGroup, LongSemiGroup, ShortSemiGroup, StringSemiGroup, VectorSemiGroup}
+
 /**
   * @author Kevin Lee
   * @since 2019-03-16
@@ -33,64 +35,44 @@ trait Monoid[A] extends SemiGroup[A] {
 
 object Monoid {
 
-  implicit def listMonoid[A]: Monoid[List[A]] = new Monoid[List[A]] {
+  implicit def listMonoid[A]: Monoid[List[A]] = new Monoid[List[A]] with ListSemiGroup[A] {
     override def zero: List[A] = Nil
-
-    override def append(a1: List[A], a2: => List[A]): List[A] = a1 ++ a2
   }
 
-  implicit def vectorMonoid[A]: Monoid[Vector[A]] = new Monoid[Vector[A]] {
+  implicit def vectorMonoid[A]: Monoid[Vector[A]] = new Monoid[Vector[A]] with VectorSemiGroup[A] {
     override def zero: Vector[A] = Vector.empty
-
-    override def append(a1: Vector[A], a2: => Vector[A]): Vector[A] = a1 ++ a2
   }
 
-  implicit def stringMonoid[A]: Monoid[String] = new Monoid[String] {
+  implicit val stringMonoid: Monoid[String] = new Monoid[String] with StringSemiGroup {
     override def zero: String = ""
-
-    override def append(a1: String, a2: => String): String = a1 + a2
   }
 
-  implicit def byteMonoid[A]: Monoid[Byte] = new Monoid[Byte] {
+  implicit val byteMonoid: Monoid[Byte] = new Monoid[Byte] with ByteSemiGroup {
     override def zero: Byte = 0.toByte
-
-    override def append(a1: Byte, a2: => Byte): Byte = (a1 + a2).toByte
   }
 
-  implicit def shortMonoid[A]: Monoid[Short] = new Monoid[Short] {
+  implicit val shortMonoid: Monoid[Short] = new Monoid[Short] with ShortSemiGroup {
     override def zero: Short = 0.toShort
-
-    override def append(a1: Short, a2: => Short): Short = (a1 + a2).toShort
   }
 
-  implicit def charMonoid[A]: Monoid[Char] = new Monoid[Char] {
+  implicit val charMonoid: Monoid[Char] = new Monoid[Char] with CharSemiGroup {
     override def zero: Char = Char.MinValue
-
-    override def append(a1: Char, a2: => Char): Char = (a1 + a2).toChar
   }
 
-  implicit def intMonoid[A]: Monoid[Int] = new Monoid[Int] {
+  implicit val intMonoid: Monoid[Int] = new Monoid[Int] with IntSemiGroup {
     override def zero: Int = 0
-
-    override def append(a1: Int, a2: => Int): Int = a1 + a2
   }
 
-  implicit def longMonoid[A]: Monoid[Long] = new Monoid[Long] {
+  implicit val longMonoid: Monoid[Long] = new Monoid[Long] with LongSemiGroup {
     override def zero: Long = 0L
-
-    override def append(a1: Long, a2: => Long): Long = a1 + a2
   }
 
-  implicit def bigIntMonoid[A]: Monoid[BigInt] = new Monoid[BigInt] {
+  implicit val bigIntMonoid: Monoid[BigInt] = new Monoid[BigInt] with BigIntSemiGroup {
     override def zero: BigInt = BigInt(0)
-
-    override def append(a1: BigInt, a2: => BigInt): BigInt = a1 + a2
   }
 
-  implicit def bigDecimalMonoid[A]: Monoid[BigDecimal] = new Monoid[BigDecimal] {
+  implicit val bigDecimalMonoid: Monoid[BigDecimal] = new Monoid[BigDecimal] with BigDecimalSemiGroup {
     override def zero: BigDecimal = BigDecimal(0)
-
-    override def append(a1: BigDecimal, a2: => BigDecimal): BigDecimal = a1 + a2
   }
 
 }
