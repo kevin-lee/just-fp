@@ -56,7 +56,7 @@ sealed abstract class WriterTMonadInstance extends WriterInstance {
 sealed abstract class WriterInstance {
 
   implicit def writerMonad[W](implicit S0: Monoid[W]): Monad[WriterT[Id, W, ?]] = new Monad[WriterT[Id, W, ?]] {
-    implicit val F: Monad[Id] = idMonad
+    implicit val F: Monad[Id] = idInstance
     implicit val S: Monoid[W] = S0
 
     def flatMap[A, B](fa: WriterT[Id, W, A])(f: A => WriterT[Id, W, B]): WriterT[Id, W, B] =
