@@ -59,6 +59,7 @@ object Equal
     with StringEqualInstance
     with BigIntEqualInstance
     with BigDecimalEqualInstance
+    with OptionEqualInstance
     with EitherEqualInstance
     with ListEqualInstance
     with VectorEqualInstance
@@ -68,6 +69,10 @@ trait NatualEqual {
     @SuppressWarnings(Array("org.wartremover.warts.Equals"))
     def equal(x: A, y: A): Boolean = x == y
   }
+}
+
+trait OptionEqualInstance {
+  implicit def optionEqual[A]: Equal[Option[A]] = Equal.equalA[Option[A]]
 }
 
 trait EitherEqualInstance {

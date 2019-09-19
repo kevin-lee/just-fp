@@ -7,67 +7,63 @@ import hedgehog.runner._
   * @author Kevin Lee
   * @since 2019-06-01
   */
-object MonadSpec extends Properties {
+object ApplicativeSpec extends Properties {
   override def tests: List[Test] = List(
-    property("testOptionMonadLaws", OptionMonadLaws.laws)
-  , property("testEitherMonadLaws", EitherMonadLaws.laws)
-  , property("testListMonadLaws", ListMonadLaws.laws)
-  , property("testVectorMonadLaws", VectorMonadLaws.laws)
-  , property("testFutureMonadLaws", FutureMonadLaws.laws)
+    property("testOptionApplicativeLaws", OptionApplicativeLaws.laws)
+  , property("testEitherApplicativeLaws", EitherApplicativeLaws.laws)
+  , property("testListApplicativeLaws", ListApplicativeLaws.laws)
+  , property("testVectorApplicativeLaws", VectorApplicativeLaws.laws)
+  , property("testFutureApplicativeLaws", FutureApplicativeLaws.laws)
   )
 
-  object OptionMonadLaws {
+  object OptionApplicativeLaws {
     def genList: Gen[Option[Int]] = Gens.genOption(Gens.genIntFromMinToMax)
 
     def laws: Property =
-      Specs.monadLaws.laws[Option](
+      Specs.applicativeLaws.laws[Option](
         genList
       , Gens.genIntFromMinToMax
       , Gens.genIntToInt
-      , Gens.genAToMonadA(Gens.genIntToInt)
       )
   }
 
-  object EitherMonadLaws {
+  object EitherApplicativeLaws {
     def genList: Gen[Either[String, Int]] = Gens.genEither(Gens.genUnicodeString, Gens.genIntFromMinToMax)
 
     def laws: Property =
-      Specs.monadLaws.laws[Either[String, ?]](
+      Specs.applicativeLaws.laws[Either[String, ?]](
         genList
       , Gens.genIntFromMinToMax
       , Gens.genIntToInt
-      , Gens.genAToMonadA[Either[String, ?], Int](Gens.genIntToInt)
       )
   }
 
-  object ListMonadLaws {
+  object ListApplicativeLaws {
     def genList: Gen[List[Int]] = Gens.genList(Gens.genIntFromMinToMax, 20)
 
     def laws: Property =
-      Specs.monadLaws.laws[List](
+      Specs.applicativeLaws.laws[List](
         genList
       , Gens.genIntFromMinToMax
       , Gens.genIntToInt
-      , Gens.genAToMonadA(Gens.genIntToInt)
       )
   }
 
-  object VectorMonadLaws {
+  object VectorApplicativeLaws {
     def genVector: Gen[Vector[Int]] = Gens.genVector(Gens.genIntFromMinToMax, 20)
 
     def laws: Property =
-      Specs.monadLaws.laws[Vector](
+      Specs.applicativeLaws.laws[Vector](
         genVector
       , Gens.genIntFromMinToMax
       , Gens.genIntToInt
-      , Gens.genAToMonadA(Gens.genIntToInt)
       )
   }
 
   /* NOTE: Future complies with the laws only for the success cases.
    * It does not for failure cases.
    */
-  object FutureMonadLaws {
+  object FutureApplicativeLaws {
     import scala.concurrent.ExecutionContext.Implicits.global
     import scala.concurrent.Future
 
@@ -76,11 +72,10 @@ object MonadSpec extends Properties {
     def genFuture: Gen[Future[Int]] = Gens.genFuture(Gens.genIntFromMinToMax)
 
     def laws: Property =
-      Specs.monadLaws.laws[Future](
+      Specs.applicativeLaws.laws[Future](
           genFuture
         , Gens.genIntFromMinToMax
         , Gens.genIntToInt
-        , Gens.genAToMonadA(Gens.genIntToInt)
         )
   }
 

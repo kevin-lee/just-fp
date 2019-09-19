@@ -55,10 +55,26 @@ trait Applicative[F[_]] extends Functor[F] {
 object Applicative extends ApplicativeInstances
 
 private[fp] trait ApplicativeInstances
-  extends EitherApplicativeInstance
+  extends OptionApplicativeInstance
+     with EitherApplicativeInstance
      with ListApplicativeInstance
      with VectorApplicativeInstance
      with FutureApplicativeInstance
+
+private[fp] trait OptionApplicative extends Applicative[Option] with OptionFunctor {
+
+  override def pure[A](a: => A): Option[A] = Some(a)
+
+  override def ap[A, B](fa: => Option[A])(fb: => Option[A => B]): Option[B] =
+    (fa, fb) match {
+      case (Some(a), Some(bf)) =>
+        Some(bf(a))
+      case (None, _) =>
+        None
+      case (_, None) =>
+        None
+    }
+}
 
 private[fp] trait EitherApplicative[A] extends Applicative[Either[A, ?]] with EitherFunctor[A] {
 
@@ -101,6 +117,10 @@ private[fp] trait FutureApplicative extends Applicative[Future] with FutureFunct
 
   override def ap[A, B](fa: => Future[A])(fab: => Future[A => B]): Future[B] =
     fab.flatMap(f => fa.map(f))
+}
+
+private[fp] trait OptionApplicativeInstance extends OptionFunctorInstance {
+  implicit val applicativeOption: Applicative[Option[?]] = new OptionApplicative {}
 }
 
 private[fp] trait EitherApplicativeInstance extends EitherFunctorInstance {
