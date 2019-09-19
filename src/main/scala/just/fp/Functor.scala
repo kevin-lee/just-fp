@@ -31,10 +31,15 @@ trait Functor[F[_]] {
 object Functor extends FunctorInstances
 
 private[fp] trait FunctorInstances
-  extends EitherFunctorInstance
+  extends OptionFunctorInstance
+     with EitherFunctorInstance
      with ListFunctorInstance
      with VectorFunctorInstance
      with FutureFunctorInstance
+
+private[fp] trait OptionFunctor extends Functor[Option] {
+  override def map[A, B](fa: Option[A])(f: A => B): Option[B] = fa.map(f)
+}
 
 private[fp] trait EitherFunctor[A] extends Functor[Either[A, ?]] {
   override def map[B, C](fa: Either[A, B])(f: B => C): Either[A, C] =
@@ -56,6 +61,10 @@ private[fp] trait FutureFunctor extends Functor[Future] {
 
   override def map[A, B](fa: Future[A])(f: A => B): Future[B] =
     fa.map(f)(executor)
+}
+
+private[fp] trait OptionFunctorInstance {
+  implicit val optionFunctor: Functor[Option] = new OptionFunctor {}
 }
 
 private[fp] trait EitherFunctorInstance {

@@ -55,6 +55,36 @@ object Specs {
     }
   }
 
+  object applicativeLaws {
+    def laws[M[_]](
+        genM: Gen[M[Int]]
+      , genInt: Gen[Int]
+      , genF: Gen[Int => Int]
+    )(implicit applicative: Applicative[M]
+    , eqM: Equal[M[Int]]
+    ): Property = for {
+      m <- genM.log("m: M[Int]")
+      x <- genInt.log("x: Int")
+      f <- genF.log("f: Int => Int")
+      f2 <- genF.log("f2: Int => Int")
+    } yield {
+      Result.all(List(
+        (applicative.functorLaw.identity[Int](m) ==== true)
+          .log("functorLaw.identity")
+        , (applicative.functorLaw.composition[Int, Int, Int](m, f, f2) ==== true)
+          .log("functorLaw.composition")
+        , (applicative.applicativeLaw.identityAp[Int](m) ==== true)
+          .log("applicativeLaw.identityAp")
+        , (applicative.applicativeLaw.homomorphism[Int, Int](f, x) ==== true)
+          .log("applicativeLaw.homomorphism")
+        , (applicative.applicativeLaw.interchange[Int, Int](x, applicative.pure(f)) ==== true)
+          .log("applicativeLaw.interchange")
+        , (applicative.applicativeLaw.compositionAp[Int, Int, Int](m, applicative.pure(f), applicative.pure(f2)) ==== true)
+          .log("applicativeLaw.compositionAp")
+      ))
+    }
+  }
+
   object monadLaws {
     def laws[M[_]](
         genM: Gen[M[Int]]
@@ -94,4 +124,14 @@ object Specs {
     }
   }
 
+  object FutureEqualInstance {
+    import scala.concurrent.ExecutionContext.Implicits.global
+    import scala.concurrent.duration._
+    import scala.concurrent.{Await, Future}
+
+    implicit def futureEqual[A](implicit EQ: Equal[A]): Equal[Future[A]] = new Equal[Future[A]] {
+      override def equal(x: Future[A], y: Future[A]): Boolean =
+        Await.result(x.flatMap(a => y.map(b => EQ.equal(a, b))), 1.second)
+    }
+  }
 }

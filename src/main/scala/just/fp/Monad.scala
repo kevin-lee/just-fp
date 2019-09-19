@@ -45,6 +45,7 @@ object Monad extends MonadInstances
 
 private[fp] trait MonadInstances
   extends IdInstance
+     with OptionMonadInstance
      with EitherMonadInstance
      with ListMonadInstance
      with VectorMonadInstance
@@ -58,6 +59,14 @@ private[fp] trait IdInstance {
 
       override def flatMap[A, B](ma: Id[A])(f: A => Id[B]): Id[B] = f(ma)
     }
+}
+
+private[fp] trait OptionMonad extends Monad[Option] with OptionApplicative {
+
+  override def flatMap[A, B](ma: Option[A])(f: A => Option[B]): Option[B] =
+    ma.flatMap(f)
+
+  override def pure[A](a: => A): Option[A] = Option(a)
 }
 
 private[fp] trait EitherMonad[A] extends Monad[Either[A, ?]] with EitherApplicative[A] {
@@ -93,6 +102,10 @@ private[fp] trait FutureMonad extends Monad[Future] with FutureApplicative {
     ma.flatMap(f)
 
   override def pure[A](a: => A): Future[A] = Future(a)
+}
+
+private[fp] trait OptionMonadInstance extends OptionApplicativeInstance {
+  implicit val optionMonad: Monad[Option] = new OptionMonad {}
 }
 
 private[fp] trait EitherMonadInstance extends EitherApplicativeInstance {

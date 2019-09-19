@@ -9,11 +9,22 @@ import hedgehog.runner._
   */
 object FunctorSpec extends Properties {
   override def tests: List[Test] = List(
-    property("testEitherFunctorLaws", EitherFunctorLaws.laws)
+    property("testOptionFunctorLaws", OptionFunctorLaws.laws)
+  , property("testEitherFunctorLaws", EitherFunctorLaws.laws)
   , property("testListFunctorLaws", ListFunctorLaws.laws)
   , property("testVectorFunctorLaws", VectorFunctorLaws.laws)
   , property("testFutureFunctorLaws", FutureFunctorLaws.laws)
   )
+
+  object OptionFunctorLaws {
+    def genList: Gen[Option[Int]] = Gens.genOption(Gens.genIntFromMinToMax)
+
+    def laws: Property =
+      Specs.functorLaws.laws[Option](
+        genList
+        , Gens.genIntToInt
+      )
+  }
 
   object EitherFunctorLaws {
     def genEither: Gen[Either[String, Int]] = Gens.genEither(Gens.genUnicodeString ,Gens.genIntFromMinToMax)
@@ -47,14 +58,9 @@ object FunctorSpec extends Properties {
 
   object FutureFunctorLaws {
     import scala.concurrent.ExecutionContext.Implicits.global
-    import scala.concurrent.duration._
-    import scala.concurrent.{Await, Future}
+    import scala.concurrent.Future
 
-    implicit def futureEqual: Equal[Future[Int]] = new Equal[Future[Int]] {
-      @SuppressWarnings(Array("org.wartremover.warts.Equals"))
-      override def equal(x: Future[Int], y: Future[Int]): Boolean =
-        Await.result(x.flatMap(a => y.map(b => a == b)), 1.second)
-    }
+    import Specs.FutureEqualInstance.futureEqual
 
     def genFuture: Gen[Future[Int]] = Gens.genFuture(Gens.genIntFromMinToMax)
 
