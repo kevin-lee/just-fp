@@ -216,4 +216,11 @@ object Gens {
     genInt: Gen[A])(
     implicit ex: scala.concurrent.ExecutionContext): Gen[scala.concurrent.Future[A]] =
     genInt.map(n => scala.concurrent.Future(n))
+
+  def genOption[A](genA: Gen[A]): Gen[Option[A]] =
+    genA.option
+
+  def genEither[A, B](genA: Gen[A], genB: Gen[B]): Gen[Either[A, B]] =
+    Gen.choice1(genA.map(Left(_)), genB.map(Right(_)))
+
 }

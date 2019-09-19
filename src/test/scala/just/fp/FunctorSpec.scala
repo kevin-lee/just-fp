@@ -9,10 +9,21 @@ import hedgehog.runner._
   */
 object FunctorSpec extends Properties {
   override def tests: List[Test] = List(
-    property("testListFunctorLaws", ListFunctorLaws.laws)
+    property("testEitherFunctorLaws", EitherFunctorLaws.laws)
+  , property("testListFunctorLaws", ListFunctorLaws.laws)
   , property("testVectorFunctorLaws", VectorFunctorLaws.laws)
   , property("testFutureFunctorLaws", FutureFunctorLaws.laws)
   )
+
+  object EitherFunctorLaws {
+    def genEither: Gen[Either[String, Int]] = Gens.genEither(Gens.genUnicodeString ,Gens.genIntFromMinToMax)
+
+    def laws: Property =
+      Specs.functorLaws.laws[Either[String, ?]](
+          genEither
+        , Gens.genIntToInt
+        )
+  }
 
   object ListFunctorLaws {
     def genList: Gen[List[Int]] = Gens.genList(Gens.genIntFromMinToMax, 20)

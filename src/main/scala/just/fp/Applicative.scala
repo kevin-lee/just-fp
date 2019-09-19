@@ -52,20 +52,77 @@ trait Applicative[F[_]] extends Functor[F] {
   def applicativeLaw: ApplicativeLaw = new ApplicativeLaw {}
 }
 
-object Applicative {
+object Applicative extends ApplicativeInstances
 
-  implicit def applicativeEither[L]: Applicative[Either[L, ?]] =
-    new Applicative[Either[L, ?]] {
-      def pure[A](a: => A): Either[L, A] = Right(a)
+private[fp] trait ApplicativeInstances
+  extends EitherApplicativeInstance
+     with ListApplicativeInstance
+     with VectorApplicativeInstance
+     with FutureApplicativeInstance
 
-      def ap[A, B](fa: => Either[L, A])(fb: => Either[L, A => B]): Either[L, B] =
-        (fa, fb) match {
-          case (Right(a), Right(bf)) =>
-            Right(bf(a))
-          case (Left(l), _) =>
-            Left(l)
-          case (_, Left(l)) =>
-            Left(l)
-        }
+private[fp] trait EitherApplicative[A] extends Applicative[Either[A, ?]] with EitherFunctor[A] {
+
+  override def pure[B](b: => B): Either[A, B] = Right(b)
+
+  override def ap[B, C](fb: => Either[A, B])(fc: => Either[A, B => C]): Either[A, C] =
+    (fb, fc) match {
+      case (Right(b), Right(cf)) =>
+        Right(cf(b))
+      case (Left(a), _) =>
+        Left(a)
+      case (_, Left(a)) =>
+        Left(a)
+    }
+}
+
+private[fp] trait ListApplicative extends Applicative[List] with ListFunctor {
+
+  override def pure[A](a: => A): List[A] = List(a)
+
+  override def ap[A, B](fa: => List[A])(fab: => List[A => B]): List[B] =
+    fab.flatMap(f => fa.map(f))
+}
+
+private[fp] trait VectorApplicative extends Applicative[Vector] with VectorFunctor {
+
+  override def pure[A](a: => A): Vector[A] = Vector(a)
+
+  override def ap[A, B](fa: => Vector[A])(fab: => Vector[A => B]): Vector[B] =
+    fab.flatMap(f => fa.map(f))
+}
+
+import scala.concurrent.Future
+private[fp] trait FutureApplicative extends Applicative[Future] with FutureFunctor {
+  import scala.concurrent.ExecutionContext
+
+  override implicit def executor: ExecutionContext
+
+  override def pure[A](a: => A): Future[A] = Future(a)
+
+  override def ap[A, B](fa: => Future[A])(fab: => Future[A => B]): Future[B] =
+    fab.flatMap(f => fa.map(f))
+}
+
+private[fp] trait EitherApplicativeInstance extends EitherFunctorInstance {
+  implicit def applicativeEither[A]: Applicative[Either[A, ?]] =
+    new EitherApplicative[A] {}
+
+}
+
+private[fp] trait ListApplicativeInstance extends ListFunctorInstance {
+  implicit val applicativeList: Applicative[List] = new ListApplicative {}
+}
+
+private[fp] trait VectorApplicativeInstance extends VectorFunctorInstance {
+  implicit val applicativeVector: Applicative[Vector] = new VectorApplicative {}
+}
+
+private[fp] trait FutureApplicativeInstance extends FutureFunctorInstance {
+  import scala.concurrent.ExecutionContext
+
+  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
+  implicit def applicativeFuture(implicit executor0: ExecutionContext): Applicative[Future] =
+    new FutureApplicative {
+      implicit def executor: ExecutionContext = executor0
     }
 }
