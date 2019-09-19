@@ -124,14 +124,4 @@ object Specs {
     }
   }
 
-  object FutureEqualInstance {
-    import scala.concurrent.ExecutionContext.Implicits.global
-    import scala.concurrent.duration._
-    import scala.concurrent.{Await, Future}
-
-    implicit def futureEqual[A](implicit EQ: Equal[A]): Equal[Future[A]] = new Equal[Future[A]] {
-      override def equal(x: Future[A], y: Future[A]): Boolean =
-        Await.result(x.flatMap(a => y.map(b => EQ.equal(a, b))), 1.second)
-    }
-  }
 }

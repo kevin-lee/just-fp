@@ -60,7 +60,7 @@ object FunctorSpec extends Properties {
     import scala.concurrent.ExecutionContext.Implicits.global
     import scala.concurrent.Future
 
-    import Specs.FutureEqualInstance.futureEqual
+    import just.fp.testing.EqualUtil.FutureEqualInstance.futureEqual
 
     def genFuture: Gen[Future[Int]] = Gens.genFuture(Gens.genIntFromMinToMax)
 

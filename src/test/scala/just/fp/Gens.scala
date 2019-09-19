@@ -223,4 +223,10 @@ object Gens {
   def genEither[A, B](genA: Gen[A], genB: Gen[B]): Gen[Either[A, B]] =
     Gen.choice1(genA.map(Left(_)), genB.map(Right(_)))
 
+  def genWriterT[F[_], W, A](genW: Gen[W], genA: Gen[A])(implicit F: Monad[F]): Gen[WriterT[F, W, A]] =
+    for {
+      w <- genW
+      a <- genA
+    } yield WriterT(F.pure((w, a)))
+
 }
