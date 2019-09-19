@@ -229,4 +229,12 @@ object Gens {
       a <- genA
     } yield WriterT(F.pure((w, a)))
 
+  def genEitherT[F[_], A, B](genA: Gen[A], genB: Gen[B])(implicit F: Monad[F]): Gen[EitherT[F, A, B]] =
+    genEither(genA, genB).map {
+      case Right(b) =>
+        EitherT.pure(b)
+      case Left(a) =>
+        EitherT.pureLeft(a)
+    }
+
 }
