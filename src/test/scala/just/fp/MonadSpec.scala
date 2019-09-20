@@ -32,11 +32,11 @@ object MonadSpec extends Properties {
     def genList: Gen[Either[String, Int]] = Gens.genEither(Gens.genUnicodeString, Gens.genIntFromMinToMax)
 
     def laws: Property =
-      Specs.monadLaws.laws[Either[String, ?]](
+      Specs.monadLaws.laws[Either[String, *]](
         genList
       , Gens.genIntFromMinToMax
       , Gens.genIntToInt
-      , Gens.genAToMonadA[Either[String, ?], Int](Gens.genIntToInt)
+      , Gens.genAToMonadA[Either[String, *], Int](Gens.genIntToInt)
       )
   }
 

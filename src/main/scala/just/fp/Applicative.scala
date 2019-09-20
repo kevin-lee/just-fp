@@ -76,7 +76,7 @@ private[fp] trait OptionApplicative extends Applicative[Option] with OptionFunct
     }
 }
 
-private[fp] trait EitherApplicative[A] extends Applicative[Either[A, ?]] with EitherFunctor[A] {
+private[fp] trait EitherApplicative[A] extends Applicative[Either[A, *]] with EitherFunctor[A] {
 
   override def pure[B](b: => B): Either[A, B] = Right(b)
 
@@ -120,11 +120,11 @@ private[fp] trait FutureApplicative extends Applicative[Future] with FutureFunct
 }
 
 private[fp] trait OptionApplicativeInstance extends OptionFunctorInstance {
-  implicit val applicativeOption: Applicative[Option[?]] = new OptionApplicative {}
+  implicit val applicativeOption: Applicative[Option[*]] = new OptionApplicative {}
 }
 
 private[fp] trait EitherApplicativeInstance extends EitherFunctorInstance {
-  implicit def applicativeEither[A]: Applicative[Either[A, ?]] =
+  implicit def applicativeEither[A]: Applicative[Either[A, *]] =
     new EitherApplicative[A] {}
 
 }
