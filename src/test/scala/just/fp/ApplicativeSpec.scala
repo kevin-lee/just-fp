@@ -31,7 +31,7 @@ object ApplicativeSpec extends Properties {
     def genList: Gen[Either[String, Int]] = Gens.genEither(Gens.genUnicodeString, Gens.genIntFromMinToMax)
 
     def laws: Property =
-      Specs.applicativeLaws.laws[Either[String, ?]](
+      Specs.applicativeLaws.laws[Either[String, *]](
         genList
       , Gens.genIntFromMinToMax
       , Gens.genIntToInt

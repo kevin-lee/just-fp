@@ -69,7 +69,7 @@ private[fp] trait OptionMonad extends Monad[Option] with OptionApplicative {
   override def pure[A](a: => A): Option[A] = Option(a)
 }
 
-private[fp] trait EitherMonad[A] extends Monad[Either[A, ?]] with EitherApplicative[A] {
+private[fp] trait EitherMonad[A] extends Monad[Either[A, *]] with EitherApplicative[A] {
 
   override def flatMap[B, C](ma: Either[A, B])(f: B => Either[A, C]): Either[A, C] =
     EitherCompat.flatMap(ma)(f)
@@ -109,7 +109,7 @@ private[fp] trait OptionMonadInstance extends OptionApplicativeInstance {
 }
 
 private[fp] trait EitherMonadInstance extends EitherApplicativeInstance {
-  implicit def eitherMonad[A]: Monad[Either[A, ?]] = new EitherMonad[A] {}
+  implicit def eitherMonad[A]: Monad[Either[A, *]] = new EitherMonad[A] {}
 }
 
 private[fp] trait ListMonadInstance extends ListApplicativeInstance {

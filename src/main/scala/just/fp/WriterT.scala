@@ -40,13 +40,13 @@ object WriterT extends WriterTMonadInstances {
   def writerT[F[_], W, A](f: F[(W, A)]): WriterT[F, W, A] = WriterT(f)
 }
 
-private trait WriterTFunctor[F[_], W] extends Functor[WriterT[F, W, ?]] {
+private trait WriterTFunctor[F[_], W] extends Functor[WriterT[F, W, *]] {
   implicit def F: Functor[F]
 
   override def map[A, B](fa: WriterT[F, W, A])(f: A => B): WriterT[F, W, B] = fa.map(f)(F)
 }
 
-private trait WriterTApplicative[F[_], W] extends Applicative[WriterT[F, W, ?]] with WriterTFunctor[F, W] {
+private trait WriterTApplicative[F[_], W] extends Applicative[WriterT[F, W, *]] with WriterTFunctor[F, W] {
   override implicit def F: Applicative[F]
   implicit def W: Monoid[W]
 
@@ -56,7 +56,7 @@ private trait WriterTApplicative[F[_], W] extends Applicative[WriterT[F, W, ?]] 
     fa.ap(fab)(F, W)
 }
 
-private trait WriterTMonad[F[_], W] extends Monad[WriterT[F, W, ?]] with WriterTApplicative[F, W] {
+private trait WriterTMonad[F[_], W] extends Monad[WriterT[F, W, *]] with WriterTApplicative[F, W] {
   override implicit def F: Monad[F]
 
   override def flatMap[A, B](ma: WriterT[F, W, A])(f: A => WriterT[F, W, B]): WriterT[F, W, B] =
@@ -65,14 +65,14 @@ private trait WriterTMonad[F[_], W] extends Monad[WriterT[F, W, ?]] with WriterT
 
 sealed abstract class WriterTFunctorInstance {
 
-  implicit def writerTMonad[F[_], W](implicit F0: Functor[F]): Functor[WriterT[F, W, ?]] =
+  implicit def writerTMonad[F[_], W](implicit F0: Functor[F]): Functor[WriterT[F, W, *]] =
     new WriterTFunctor[F, W] {
       implicit val F: Functor[F] = F0
     }
 }
 sealed abstract class WriterTApplicativeInstance extends WriterTFunctorInstance {
 
-  implicit def writerTMonad[F[_], W](implicit F0: Applicative[F], S0: Monoid[W]): Applicative[WriterT[F, W, ?]] =
+  implicit def writerTMonad[F[_], W](implicit F0: Applicative[F], S0: Monoid[W]): Applicative[WriterT[F, W, *]] =
     new WriterTApplicative[F, W] {
       override implicit val F: Applicative[F] = F0
       implicit val W: Monoid[W] = S0
@@ -81,7 +81,7 @@ sealed abstract class WriterTApplicativeInstance extends WriterTFunctorInstance 
 
 sealed abstract class WriterTMonadInstance extends WriterTApplicativeInstance {
 
-  implicit def writerTMonad[F[_], W](implicit F0: Monad[F], S0: Monoid[W]): Monad[WriterT[F, W, ?]] =
+  implicit def writerTMonad[F[_], W](implicit F0: Monad[F], S0: Monoid[W]): Monad[WriterT[F, W, *]] =
     new WriterTMonad[F, W] {
       override implicit val F: Monad[F] = F0
       override implicit val W: Monoid[W] = S0
@@ -97,7 +97,7 @@ sealed abstract class WriterTMonadInstance extends WriterTApplicativeInstance {
 
 sealed abstract class WriterMonadInstance extends WriterTMonadInstance {
 
-  implicit def writerMonad[W](implicit S0: Monoid[W]): Monad[Writer[W, ?]] =
+  implicit def writerMonad[W](implicit S0: Monoid[W]): Monad[Writer[W, *]] =
     new WriterTMonad[Id, W] {
       override implicit val F: Functor[Id] with Applicative[Id] with Monad[Id] = idInstance
       override implicit val W: Monoid[W] = S0

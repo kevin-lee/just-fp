@@ -41,7 +41,7 @@ private[fp] trait OptionFunctor extends Functor[Option] {
   override def map[A, B](fa: Option[A])(f: A => B): Option[B] = fa.map(f)
 }
 
-private[fp] trait EitherFunctor[A] extends Functor[Either[A, ?]] {
+private[fp] trait EitherFunctor[A] extends Functor[Either[A, *]] {
   override def map[B, C](fa: Either[A, B])(f: B => C): Either[A, C] =
     EitherCompat.map(fa)(f)
 }
@@ -68,7 +68,7 @@ private[fp] trait OptionFunctorInstance {
 }
 
 private[fp] trait EitherFunctorInstance {
-  implicit def eitherFunctor[A]: Functor[Either[A, ?]] = new EitherFunctor[A] {}
+  implicit def eitherFunctor[A]: Functor[Either[A, *]] = new EitherFunctor[A] {}
 }
 
 private[fp] trait ListFunctorInstance {

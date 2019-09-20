@@ -30,7 +30,7 @@ object FunctorSpec extends Properties {
     def genEither: Gen[Either[String, Int]] = Gens.genEither(Gens.genUnicodeString ,Gens.genIntFromMinToMax)
 
     def laws: Property =
-      Specs.functorLaws.laws[Either[String, ?]](
+      Specs.functorLaws.laws[Either[String, *]](
           genEither
         , Gens.genIntToInt
         )
