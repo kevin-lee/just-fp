@@ -9,11 +9,11 @@ In `build.sbt`,
 ```sbt
 resolvers += "3rd Party Repo" at "https://dl.bintray.com/kevinlee/maven"
 
-libraryDependencies += "kevinlee" %% "just-fp" % "1.1.0"
+libraryDependencies += "kevinlee" %% "just-fp" % "1.2.0"
 ```
 then import
 
 ```scala
 import just.fp._
-import just.fp.JustSyntax._
+import just.fp.syntax._
 ```
