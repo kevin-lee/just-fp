@@ -1,6 +1,6 @@
 package just.fp
 
-import JustSyntax.{leftOps, rightOps}
+import syntax.{leftOps, rightOps}
 import just.fp.compat.EitherCompat
 
 /**

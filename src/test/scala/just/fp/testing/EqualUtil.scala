@@ -21,7 +21,7 @@ object EqualUtil {
 
   object TupleEqualInstance {
 
-    import just.fp.JustSyntax._
+    import just.fp.syntax._
 
     implicit def tupleEq[A: Equal, B: Equal]: Equal[(A, B)] = new Equal[(A, B)] {
       override def equal(x: (A, B), y: (A, B)): Boolean =
