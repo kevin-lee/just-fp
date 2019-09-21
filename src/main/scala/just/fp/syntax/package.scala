@@ -6,5 +6,6 @@ package just.fp
   */
 package object syntax
   extends EqualSyntax
+     with OptionSyntax
      with EitherSyntax
      with SemiGroupSyntax
