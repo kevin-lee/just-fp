@@ -10,7 +10,6 @@ import hedgehog.runner._
 object SemiGroupSyntaxSpec extends Properties {
 
   import just.fp._
-  import just.fp.JustSyntax._
 
   override def tests: List[Test] = List(
       property("List |+| List", testPlus(Gens.genList(Gens.genIntFromMinToMax, 10)))

@@ -11,8 +11,6 @@ import just.fp.Gens
   */
 object EqualSyntaxSpec extends Properties {
 
-  object TestEqualSyntax extends EqualSyntax
-  import TestEqualSyntax._
   import just.fp.Equal
 
   override def tests: List[Prop] = List(

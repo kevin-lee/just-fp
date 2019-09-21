@@ -10,9 +10,6 @@ import hedgehog.runner._
   */
 object EitherOpsSpec extends Properties {
 
-  object TestSyntax extends EitherSyntax
-  import TestSyntax._
-
   override def tests: List[Prop] = List(
     property("Left(a).foreach should do nothing", testLeftForeach)
   , property("Right(b).foreach(f) should apply f to b in Right", testRightForeach)
