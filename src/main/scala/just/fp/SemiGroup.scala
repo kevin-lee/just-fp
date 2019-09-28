@@ -8,7 +8,7 @@ trait SemiGroup[A] {
   def append(a1: A, a2: => A): A
 }
 
-object SemiGroup {
+object SemiGroup extends OptionSemiGroupInstance {
 
   trait ListSemiGroup[A] extends SemiGroup[List[A]] {
     override def append(a1: List[A], a2: => List[A]): List[A] = a1 ++ a2
@@ -59,4 +59,28 @@ object SemiGroup {
     override def append(a1: BigDecimal, a2: => BigDecimal): BigDecimal = a1 + a2
   }
   implicit val bigDecimalSemiGroup: SemiGroup[BigDecimal] = new BigDecimalSemiGroup {}
+}
+
+private[fp] trait OptionSemigroup[A] extends SemiGroup[Option[A]] {
+
+  implicit def F: SemiGroup[A]
+
+  override def append(a1: Option[A], a2: => Option[A]): Option[A] = (a1, a2) match {
+    case (Some(x), Some(y)) =>
+      Some(implicitly[SemiGroup[A]].append(x, y))
+    case (Some(x), None) =>
+      Some(x)
+    case (None, Some(y)) =>
+      Some(y)
+    case (None, None) =>
+      None
+  }
+}
+
+private[fp] trait OptionSemiGroupInstance {
+
+  implicit def optionSemigroup[A](implicit F0: SemiGroup[A]): SemiGroup[Option[A]] =
+    new OptionSemigroup[A] {
+      override implicit def F: SemiGroup[A] = F0
+    }
 }

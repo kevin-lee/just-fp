@@ -33,7 +33,7 @@ trait Monoid[A] extends SemiGroup[A] {
   def monoidLaw: MonoidLaw = new MonoidLaw {}
 }
 
-object Monoid {
+object Monoid extends OptionMonoidInstance {
 
   implicit def listMonoid[A]: Monoid[List[A]] = new Monoid[List[A]] with ListSemiGroup[A] {
     override def zero: List[A] = Nil
@@ -75,4 +75,14 @@ object Monoid {
     override def zero: BigDecimal = BigDecimal(0)
   }
 
+}
+
+private[fp] trait OptionMonoidInstance extends OptionSemiGroupInstance {
+  implicit def optionMonoid[A](implicit F0: SemiGroup[A]): Monoid[Option[A]] =
+    new Monoid[Option[A]] with OptionSemigroup[A] {
+
+      override implicit def F: SemiGroup[A] = F0
+
+      override def zero: Option[A] = None
+    }
 }

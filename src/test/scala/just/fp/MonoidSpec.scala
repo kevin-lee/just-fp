@@ -10,7 +10,8 @@ import hedgehog.runner._
 object MonoidSpec extends Properties {
 
   override def tests: List[Test] = List(
-    property("testListMonoidLaw", ListMonoidLaws.laws)
+    property("testOptionMonoidLaw", OptionMonoidLaws.laws)
+  , property("testListMonoidLaw", ListMonoidLaws.laws)
   , property("testVectorMonoidLaw", VectorMonoidLaws.laws)
   , property("testStringMonoidLaw", StringMonoidLaws.laws)
   , property("testByteMonoidLaw", ByteMonoidLaws.laws)
@@ -37,6 +38,15 @@ object MonoidSpec extends Properties {
     def laws: Property =
       Specs.monoidLaws.laws[Vector[Int]](
         genVector
+      )
+  }
+
+  object OptionMonoidLaws {
+    def genOption: Gen[Option[Int]] = Gens.genOption(Gens.genIntFromMinToMax)
+
+    def laws: Property =
+      Specs.monoidLaws.laws[Option[Int]](
+        genOption
       )
   }
 
