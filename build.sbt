@@ -23,11 +23,13 @@ lazy val justFp = (project in file("."))
       else
         Seq(sharedSourceDir / "scala-2.10_2.11")
     }
-  , resolvers += Resolver.sonatypeRepo("releases")
+  , resolvers ++= Seq(
+        Resolver.sonatypeRepo("releases")
+      , Deps.hedgehogRepo
+      )
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.3" cross CrossVersion.binary)
   , wartremoverErrors in (Compile, compile) ++= commonWarts
   , wartremoverErrors in (Test, compile) ++= commonWarts
-  , resolvers += Deps.hedgehogRepo
   , libraryDependencies ++= Deps.hedgehogLibs
   , dependencyOverrides ++= crossVersionProps(Seq.empty[ModuleID], SemanticVersion.parseUnsafe(scalaVersion.value)) {
       case (Major(2), Minor(10)) =>
