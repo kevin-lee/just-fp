@@ -28,15 +28,15 @@ lazy val justFp = (project in file("."))
       , Deps.hedgehogRepo
       )
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.3" cross CrossVersion.binary)
-  , wartremoverErrors in (Compile, compile) ++= commonWarts
-  , wartremoverErrors in (Test, compile) ++= commonWarts
-  , libraryDependencies ++= Deps.hedgehogLibs
-  , dependencyOverrides ++= crossVersionProps(Seq.empty[ModuleID], SemanticVersion.parseUnsafe(scalaVersion.value)) {
-      case (Major(2), Minor(10)) =>
-        Seq("org.wartremover" %% "wartremover" % "2.3.7")
-      case x =>
-        Seq.empty
-    }
+  , libraryDependencies := Deps.hedgehogLibs ++
+      crossVersionProps(Seq.empty[ModuleID], SemanticVersion.parseUnsafe(scalaVersion.value)) {
+        case (Major(2), Minor(10)) =>
+          libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
+        case x =>
+          libraryDependencies.value
+      }
+  , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
+  , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
   , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
 
   /* Bintray { */
@@ -45,7 +45,8 @@ lazy val justFp = (project in file("."))
   , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
   /* } Bintray */
 
-  , initialCommands in console := """import just.fp._"""
+  , initialCommands in console :=
+      """import just.fp._; import just.fp.syntax._"""
 
   /* Coveralls { */
   , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
