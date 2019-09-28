@@ -12,7 +12,8 @@ object SemiGroupSyntaxSpec extends Properties {
   import just.fp._
 
   override def tests: List[Test] = List(
-      property("test List |+| List", testPlus(Gens.genList(Gens.genIntFromMinToMax, 10)))
+      property("test Option |+| Option", testPlus(Gens.genOption(Gens.genIntFromMinToMax)))
+    , property("test List |+| List", testPlus(Gens.genList(Gens.genIntFromMinToMax, 10)))
     , property("test Vector |+| Vector", testPlus(Gens.genVector(Gens.genIntFromMinToMax, 10)))
     , property("test String |+| String", testPlus(Gens.genUnicodeString))
     , property("test Byte |+| Byte", testPlus(Gens.genByteFromMinToMax))
@@ -22,6 +23,7 @@ object SemiGroupSyntaxSpec extends Properties {
     , property("test Long |+| Long", testPlus(Gens.genLongFromMinToMax))
     , property("test BigInt |+| BigInt", testPlus(Gens.genBigInt))
     , property("test BigDecimal |+| BigDecimal", testPlus(Gens.genBigDecimal))
+    , property("test Option.mappend(Option)", testMappend(Gens.genOption(Gens.genIntFromMinToMax)))
     , property("test List.mappend(List)", testMappend(Gens.genList(Gens.genIntFromMinToMax, 10)))
     , property("test Vector.mappend(Vector)", testMappend(Gens.genVector(Gens.genIntFromMinToMax, 10)))
     , property("test String.mappend(String)", testMappend(Gens.genUnicodeString))
