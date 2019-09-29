@@ -16,6 +16,7 @@ object WriterTSpec extends Properties {
   , property("testWriterFunctorLaws", WriterFunctorLaws.laws)
   , property("testWriterApplicativeLaws", WriterApplicativeLaws.laws)
   , property("testWriterMonadLaws", WriterMonadLaws.laws)
+  , property("test Writer(w, a) should be equal to Writer.writer((w, a))", testWriterApplyAndWriter)
   )
 
   object WriterTFunctorLaws {
@@ -97,5 +98,17 @@ object WriterTSpec extends Properties {
         , Gens.genIntToInt
         , Gens.genAToMonadA(Gens.genIntToInt)
       )
+  }
+
+  def testWriterApplyAndWriter: Property = for {
+    w <- Gens.genUnicodeString.log("w")
+    a <- Gens.genIntFromMinToMax.log("a")
+    wa = (w, a)
+  } yield {
+    val writer1 = Writer.writer(wa)
+    val writer2 = Writer(w, a)
+
+    import just.fp.syntax._
+    Result.diffNamed("=== Not Equal ===", writer1, writer2)(_ === _)
   }
 }
