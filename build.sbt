@@ -27,7 +27,7 @@ lazy val justFp = (project in file("."))
         Resolver.sonatypeRepo("releases")
       , Deps.hedgehogRepo
       )
-  , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.3" cross CrossVersion.binary)
+  , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
   , libraryDependencies := Deps.hedgehogLibs ++
       crossVersionProps(Seq.empty[ModuleID], SemanticVersion.parseUnsafe(scalaVersion.value)) {
         case (Major(2), Minor(10)) =>
