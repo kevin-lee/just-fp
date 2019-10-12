@@ -9,7 +9,7 @@ A small Functional Programming library. This is not meant to be an alternative t
 In `build.sbt`,
 
 ```sbt
-resolvers += "3rd Party Repo" at "https://dl.bintray.com/kevinlee/maven"
+resolvers += "Just Repo" at "https://dl.bintray.com/kevinlee/maven"
 
 libraryDependencies += "kevinlee" %% "just-fp" % "1.2.0"
 ```
@@ -46,7 +46,7 @@ for {
 ```
 Of course, you don't need to do it if you use Scala 2.12 or higher.
 
-## Either constructors
+## Either Constructors
 In normal ways, if you want to create `Left` or `Right`, you just use the `apply` methods of their companion objects (i.e. `Left()` `Right()`) A problem with this is that what these return is not `Either` but its data, `Left` or `Right`.
 
 You also need to specify not only type parameter for `Left` but also the one for `Right` when creating `Right`.
@@ -105,10 +105,83 @@ for {
 ```
 
 # Option
-// To be updated ...
+## Option Constructors
+Similar to `Either`, creating `Option` can expose its data instead of type.
+
+e.g.) The following code returns `Some[Int]` not `Option[Int]`.
+```scala
+Some(1)
+// Some[Int] = Some(1)
+```
+
+```scala
+None
+// None.type = None
+// Also None is None not Option[A] 
+```
+
+With `just-fp`,
+```scala
+1.some
+// Option[Int] = Some(1)
+
+none[String]
+// Option[String] = None
+```
 
 # Type-safe Equal
-// To be updated ...
+`==` in Scala is not type safe so the following code can never be `true` as their types are different but it has no compile-time error.
+
+```scala
+1 == "1" // always false, no compile-time error
+```
+
+`just-fp` has `Equal` typeclass with typeclass instances for value types (`Byte`, `Short`, `Int`, `Char`, `Long`, `Float` and `Double`) as well as `String`, `BigInt` and `BigDecimal`.
+
+It also has `Equal` typeclass instances for `WriterT`, `Writer` and `EitherT`.
+
+With `just-fp`,
+```scala
+// use triple equals from just-fp
+1 === "1"   // compile-time error
+1 === 1     // true
+"a" === "a" // true
+1 !== 1     // false
+1 !== 2     // true
+```
+
+If it's a `case class` the `equals` of which can be used for equality check, `NatualEqual` can be used.
+
+e.g.)
+```scala
+case class Foo(n: Int)
+```
+```scala
+Foo(1) === Foo(1)
+       ^
+error: value === is not a member of Foo
+```
+This can be solved by `NatualEqual`.
+
+```scala
+case class Foo(n: Int)
+
+object Foo {
+  implicit val eqaul: Equal[Foo] = Equal.equalA[Foo]
+}
+
+Foo(1) === Foo(1)
+// Boolean = true
+
+Foo(1) === Foo(2)
+// Boolean = false
+
+Foo(1) !== Foo(1)
+// Boolean = false
+
+Foo(1) !== Foo(2)
+// Boolean = true
+```
 
 # Semi-Group
 // To be updated ...
