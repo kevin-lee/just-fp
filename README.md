@@ -186,7 +186,118 @@ Foo(1) !== Foo(2)
 ```
 
 # Semi-Group
-// To be updated ...
+A semi-group is a typeclass which can apply associative binary operation. So if a type is a semi-group, its binary operation `append` can be applied. It's associative so `SemiGroup[A].append(SemiGroup[A].append(a, b), c)` is equal to `SemiGroup[A].append(a, SemiGroup[A].append(b, c))`
+
+e.g.)
+```scala
+def foo[A](x: Int, y: Int, f: Int => A)(implicit S: SemiGroup[A]): A =
+  S.append(f(x), f(y))
+
+// or with context bound
+def foo[A: SemiGroup](x: Int, y: Int, f: Int => A): A =
+  implicitly[SemiGroup[A]].append(f(x), f(y))
+```
+
+If there is a typeclass instance of `SemiGroup` for a type `A`, `mappend` method or a convenient `|+|` infix operator can be used like this.
+
+e.g.) There is already a SemiGroup typeclass instance for `Int` in `just-fp` so you can do
+```scala
+1.mappend(2)
+// Int = 3
+
+1 |+| 2
+// Int = 3
+``` 
+
+Typeclass instances for the following typeclasses are available in `just-fp`.
+* `SemiGroup[List[A]]`
+  ```scala
+  List(1, 2, 3) |+| List(4, 5, 6)
+  // List[Int] = List(1, 2, 3, 4, 5, 6)
+  
+  List(1, 2, 3).mappend(List(4, 5, 6))
+  // List[Int] = List(1, 2, 3, 4, 5, 6)
+  ```
+* `SemiGroup[Vector[A]]`
+  ```scala
+  Vector(1, 2, 3) |+| Vector(4, 5, 6)
+  // Vector[Int] = Vector(1, 2, 3, 4, 5, 6)
+  
+  Vector(1, 2, 3).mappend(Vector(4, 5, 6))
+  // Vector[Int] = Vector(1, 2, 3, 4, 5, 6)
+  ```
+* `SemiGroup[String]`
+  ```scala
+  "abc" |+| "def"
+  // String = "abcdef"
+  
+  "abc".mappend("def")
+  // String = "abcdef"
+  ```
+* `SemiGroup[Byte]`
+  ```scala
+  1.toByte |+| 2.toByte
+  // Byte = 3
+  
+  1.toByte.mappend(2.toByte)
+  // Byte = 3
+  ```
+* `SemiGroup[Short]`
+  ```scala
+  1.toShort |+| 2.toShort
+  // Short = 3
+  
+  1.toShort.mappend(2.toShort)
+  // Short = 3
+  ```
+* `SemiGroup[Char]`
+  ```scala
+  'A' |+| '1'
+  // Char = 'r'
+
+  'A'.mappend('1')
+  // Char = 'r'
+  ```
+* `SemiGroup[Int]`
+  ```scala
+  1 |+| 2
+  // Int = 3
+  
+  1.mappend(2)
+  // Int = 3
+  ```
+* `SemiGroup[Long]`
+  ```scala
+  1L |+| 2L
+  // Long = 3L
+  
+  1L.mappend(2L)
+  // Long = 3L
+  ```
+* `SemiGroup[BigInt]`
+  ```scala
+  BigInt(1) |+| BigInt(2)
+  // BigInt = 3
+  
+  BigInt(1).mappend(BigInt(2))
+  // BigInt = 3
+  ```
+* `SemiGroup[BigDecimal]`
+  ```scala
+  BigDecimal(1) |+| BigDecimal(2)
+  // BigDecimal = 3
+  
+  BigDecimal(1).mappend(BigDecimal(2))
+  // BigDecimal = 3
+  ```
+* `SemiGroup[Option[A]]` if there is a typeclass instance of `SemiGroup[A]`.
+  ```scala
+  1.some |+| 2.some
+  // Option[Int] = Some(3)
+  
+  1.some.mappend(2.some)
+  // Option[Int] = Some(3)
+  ```
 
 # Monoid
 // To be updated ...
