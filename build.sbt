@@ -39,6 +39,8 @@ lazy val justFp = (project in file("."))
   , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
   , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
 
+  , gitTagFrom := "release"
+
   /* Bintray { */
   , bintrayPackageLabels := Seq("Scala", "Functional Programming", "FP")
   , bintrayVcsUrl := Some("""git@github.com:Kevin-Lee/just-fp.git""")
