@@ -93,7 +93,7 @@ sealed abstract class EitherTFunctorInstance {
 }
 
 sealed abstract class EitherTApplicativeInstance extends EitherTFunctorInstance {
-  implicit def eitherTFunctor[F[_], A](implicit F0: Applicative[F]): Applicative[EitherT[F, A, *]] =
+  implicit def eitherTApplicative[F[_], A](implicit F0: Applicative[F]): Applicative[EitherT[F, A, *]] =
     new EitherTApplicative[F, A] {
       override implicit val F: Applicative[F] = F0
     }

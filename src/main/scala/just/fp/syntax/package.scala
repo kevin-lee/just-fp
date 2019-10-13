@@ -9,3 +9,4 @@ package object syntax
      with OptionSyntax
      with EitherSyntax
      with SemiGroupSyntax
+     with WriterSyntax
