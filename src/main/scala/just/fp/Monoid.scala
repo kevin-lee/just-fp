@@ -35,6 +35,8 @@ trait Monoid[A] extends SemiGroup[A] {
 
 object Monoid extends OptionMonoidInstance {
 
+  @inline final def apply[A : Monoid]: Monoid[A] = implicitly[Monoid[A]]
+
   implicit def listMonoid[A]: Monoid[List[A]] = new Monoid[List[A]] with ListSemiGroup[A] {
     override def zero: List[A] = Nil
   }

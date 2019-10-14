@@ -62,7 +62,10 @@ object Equal
     with OptionEqualInstance
     with EitherEqualInstance
     with ListEqualInstance
-    with VectorEqualInstance
+    with VectorEqualInstance {
+
+  @inline final def apply[F : Equal]: Equal[F] = implicitly[Equal[F]]
+}
 
 trait NatualEqual {
   def equalA[A]: Equal[A] = new Equal[A] {

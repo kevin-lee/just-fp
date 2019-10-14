@@ -10,9 +10,9 @@ import scala.language.implicitConversions
   */
 object SemiGroupSyntax {
   final class SemiGroupOps[A: SemiGroup] private[syntax](val a1: A) {
-    def |+|(a2: A): A = implicitly[SemiGroup[A]].append(a1, a2)
+    def |+|(a2: A): A = SemiGroup[A].append(a1, a2)
 
-    def mappend(a2: A): A = implicitly[SemiGroup[A]].append(a1, a2)
+    def mappend(a2: A): A = SemiGroup[A].append(a1, a2)
   }
 }
 

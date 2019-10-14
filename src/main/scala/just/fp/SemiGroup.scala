@@ -10,6 +10,8 @@ trait SemiGroup[A] {
 
 object SemiGroup extends OptionSemiGroupInstance {
 
+  @inline final def apply[A : SemiGroup]: SemiGroup[A] = implicitly[SemiGroup[A]]
+
   trait ListSemiGroup[A] extends SemiGroup[List[A]] {
     override def append(a1: List[A], a2: => List[A]): List[A] = a1 ++ a2
   }
@@ -67,7 +69,7 @@ private[fp] trait OptionSemigroup[A] extends SemiGroup[Option[A]] {
 
   override def append(a1: Option[A], a2: => Option[A]): Option[A] = (a1, a2) match {
     case (Some(x), Some(y)) =>
-      Some(implicitly[SemiGroup[A]].append(x, y))
+      Some(SemiGroup[A].append(x, y))
     case (Some(x), None) =>
       Some(x)
     case (None, Some(y)) =>

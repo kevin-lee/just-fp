@@ -52,7 +52,10 @@ trait Applicative[F[_]] extends Functor[F] {
   def applicativeLaw: ApplicativeLaw = new ApplicativeLaw {}
 }
 
-object Applicative extends ApplicativeInstances
+object Applicative extends ApplicativeInstances {
+
+  @inline final def apply[F[_] : Applicative]: Applicative[F] = implicitly[Applicative[F]]
+}
 
 private[fp] trait ApplicativeInstances
   extends OptionApplicativeInstance
