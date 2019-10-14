@@ -37,7 +37,7 @@ object FunctorSpec extends Properties {
   }
 
   object ListFunctorLaws {
-    def genList: Gen[List[Int]] = Gens.genList(Gens.genIntFromMinToMax, 20)
+    def genList: Gen[List[Int]] = Gens.genList(Gens.genIntFromMinToMax, 0, 20)
 
     def laws: Property =
       Specs.functorLaws.laws[List](
@@ -47,7 +47,7 @@ object FunctorSpec extends Properties {
   }
 
   object VectorFunctorLaws {
-    def genVector: Gen[Vector[Int]] = Gens.genVector(Gens.genIntFromMinToMax, 20)
+    def genVector: Gen[Vector[Int]] = Gens.genVector(Gens.genIntFromMinToMax, 0, 20)
 
     def laws: Property =
       Specs.functorLaws.laws[Vector](
