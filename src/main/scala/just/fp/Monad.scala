@@ -41,7 +41,10 @@ trait Monad[M[_]] extends Applicative[M] {
   def monadLaw: MonadLaw = new MonadLaw {}
 }
 
-object Monad extends MonadInstances
+object Monad extends MonadInstances {
+
+  @inline final def apply[M[_] : Monad]: Monad[M] = implicitly[Monad[M]]
+}
 
 private[fp] trait MonadInstances
   extends IdInstance

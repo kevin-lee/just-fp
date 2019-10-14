@@ -58,10 +58,10 @@ final case class EitherT[F[_], A, B](run: F[Either[A, B]]) {
 
 object EitherT extends EitherTMonadInstance {
   def pure[F[_]: Applicative, A, B](b: B): EitherT[F, A, B] =
-    EitherT(implicitly[Applicative[F]].pure(Right(b)))
+    EitherT(Applicative[F].pure(Right(b)))
 
   def pureLeft[F[_]: Applicative, A, B](a: A): EitherT[F, A, B] =
-    EitherT(implicitly[Applicative[F]].pure(Left(a)))
+    EitherT(Applicative[F].pure(Left(a)))
 }
 
 private trait EitherTFunctor[F[_], A] extends Functor[EitherT[F, A, *]] {

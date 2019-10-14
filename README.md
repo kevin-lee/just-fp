@@ -298,6 +298,7 @@ Typeclass instances for the following typeclasses are available in `just-fp`.
   1.some.mappend(2.some)
   // Option[Int] = Some(3)
   ```
+  NOTE: There might be an associativity issue with `BigDecimal` if it's created with other `MathContext` than `MathContext.UNLIMITED` and the number is big enough in Scala 2.13. More about the issue please read [this blog](https://blog.kevinlee.io/2019/09/29/be-careful-when-using-bigdecimal-in-scala-2.13).
 
 # Monoid
 // To be updated ...

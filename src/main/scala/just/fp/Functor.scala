@@ -28,7 +28,10 @@ trait Functor[F[_]] {
   def functorLaw: FunctorLaw = new FunctorLaw {}
 }
 
-object Functor extends FunctorInstances
+object Functor extends FunctorInstances {
+
+  @inline final def apply[F[_] : Functor]: Functor[F] = implicitly[Functor[F]]
+}
 
 private[fp] trait FunctorInstances
   extends OptionFunctorInstance
