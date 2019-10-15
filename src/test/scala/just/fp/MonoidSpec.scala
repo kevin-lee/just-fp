@@ -13,48 +13,114 @@ object MonoidSpec extends Properties {
 
   override def tests: List[Test] = List(
     property("testOptionMonoidLaw", OptionMonoidLaws.laws)
-  , example("test OptionMonoid.isZero zero case", testIsZero(none[Int]))
-  , property("test OptionMonoid.isZero non-zero case", testNonZero(Gens.genIntFromMinToMax.map(_.some)))
+  , example(
+      "test OptionMonoid.isZero zero case"
+    , testMonoidFunction("isZero", none[Int])(_.isZero(_))
+    )
+  , property(
+      "test OptionMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genIntFromMinToMax.map(_.some))(!_.isZero(_))
+    )
   , property("testListMonoidLaw", ListMonoidLaws.laws)
-  , example("test ListMonoid.isZero zero case", testIsZero(List.empty[Int]))
-  , property("test ListMonoid.isZero non-zero case", testNonZero(Gens.genList(Gens.genIntFromMinToMax, 1, 10)))
+  , example(
+      "test ListMonoid.isZero zero case"
+    , testMonoidFunction("isZero", List.empty[Int])(_.isZero(_))
+    )
+  , property(
+      "test ListMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genList(Gens.genIntFromMinToMax, 1, 10))(!_.isZero(_))
+    )
   , property("testVectorMonoidLaw", VectorMonoidLaws.laws)
-  , example("test VectorMonoid.isZero zero case", testIsZero(Vector.empty[Int]))
-  , property("test VectorMonoid.isZero non-zero case", testNonZero(Gens.genVector(Gens.genIntFromMinToMax, 1, 10)))
+  , example(
+      "test VectorMonoid.isZero zero case"
+    , testMonoidFunction("isZero", Vector.empty[Int])(_.isZero(_))
+    )
+  , property(
+      "test VectorMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genVector(Gens.genIntFromMinToMax, 1, 10))(!_.isZero(_))
+    )
   , property("testStringMonoidLaw", StringMonoidLaws.laws)
-  , example("test StringMonoid.isZero zero case", testIsZero(""))
-  , property("test StringMonoid.isZero non-zero case", testNonZero(Gen.constant("a").flatMap(c => Gens.genUnicodeString.map(c + _))))
+  , example(
+      "test StringMonoid.isZero zero case"
+    , testMonoidFunction("isZero", "")(_.isZero(_))
+    )
+  , property(
+      "test StringMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gen.constant("a").flatMap(c => Gens.genUnicodeString.map(c + _)))(!_.isZero(_))
+    )
   , property("testByteMonoidLaw", ByteMonoidLaws.laws)
-  , example("test ByteMonoid.isZero zero case", testIsZero(0.toByte))
-  , property("test ByteMonoid.isZero non-zero case", testNonZero(Gens.genByte(1, Byte.MaxValue)))
+  , example(
+      "test ByteMonoid.isZero zero case"
+    , testMonoidFunction("isZero", 0.toByte)(_.isZero(_))
+    )
+  , property(
+      "test ByteMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genByte(1, Byte.MaxValue))(!_.isZero(_))
+    )
   , property("testShortMonoidLaw", ShortMonoidLaws.laws)
-  , example("test ShortMonoid.isZero zero case", testIsZero(0.toShort))
-  , property("test ShortMonoid.isZero non-zero case", testNonZero(Gens.genShort(1, Short.MaxValue)))
+  , example(
+      "test ShortMonoid.isZero zero case"
+    , testMonoidFunction("isZero", 0.toShort)(_.isZero(_))
+    )
+  , property(
+      "test ShortMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genShort(1, Short.MaxValue))(!_.isZero(_))
+    )
   , property("testCharMonoidLaw", CharMonoidLaws.laws)
-  , example("test CharMonoid.isZero zero case", testIsZero(0.toChar))
-  , property("test CharMonoid.isZero non-zero case", testNonZero(Gens.genChar(1, Char.MaxValue)))
+  , example(
+      "test CharMonoid.isZero zero case"
+    , testMonoidFunction("isZero", 0.toChar)(_.isZero(_))
+    )
+  , property(
+      "test CharMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genChar(1, Char.MaxValue))(!_.isZero(_))
+    )
   , property("testIntMonoidLaw", IntMonoidLaws.laws)
-  , example("test IntMonoid.isZero zero case", testIsZero(0))
-  , property("test IntMonoid.isZero non-zero case", testNonZero(Gens.genInt(1, Int.MaxValue)))
+  , example(
+      "test IntMonoid.isZero zero case"
+    , testMonoidFunction("isZero", 0)(_.isZero(_))
+    )
+  , property(
+      "test IntMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genInt(1, Int.MaxValue))(!_.isZero(_))
+    )
   , property("testLongMonoidLaw", LongMonoidLaws.laws)
-  , example("test LongMonoid.isZero zero case", testIsZero(0L))
-  , property("test LongMonoid.isZero non-zero case", testNonZero(Gens.genLong(1L, Long.MaxValue)))
+  , example(
+      "test LongMonoid.isZero zero case"
+    , testMonoidFunction("isZero", 0L)(_.isZero(_))
+    )
+  , property(
+      "test LongMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genLong(1L, Long.MaxValue))(!_.isZero(_))
+    )
   , property("testBigIntMonoidLaw", BigIntMonoidLaws.laws)
-  , example("test BigIntMonoid.isZero zero case", testIsZero(BigInt(0)))
-  , property("test BigIntMonoid.isZero non-zero case", testNonZero(Gens.genBigInt(1L, Long.MaxValue)))
+  , example(
+      "test BigIntMonoid.isZero zero case"
+    , testMonoidFunction("isZero", BigInt(0))(_.isZero(_))
+    )
+  , property(
+      "test BigIntMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genBigInt(1L, Long.MaxValue))(!_.isZero(_))
+    )
   , property("testBigDecimalMonoidLaw", BigDecimalMonoidLaws.laws)
-  , example("test BigDecimalMonoid.isZero zero case", testIsZero(BigDecimal(0)))
-  , property("test BigDecimalMonoid.isZero non-zero case", testNonZero(Gens.genBigDecimal(1F, Float.MaxValue, 1L, Long.MaxValue)))
+  , example(
+      "test BigDecimalMonoid.isZero zero case"
+    , testMonoidFunction("isZero", BigDecimal(0))(_.isZero(_))
+    )
+  , property(
+      "test BigDecimalMonoid.isZero non-zero case"
+    , propertyTestMonoidFunction("isZero", Gens.genBigDecimal(1F, Float.MaxValue, 1L, Long.MaxValue))(!_.isZero(_))
+    )
   )
 
-  def testIsZero[A : Monoid : Equal](monoid: A): Result = {
-    Result.diffNamed("=== isZero Not true ===", Monoid[A], monoid)(_.isZero(_))
+  def testMonoidFunction[A : Monoid : Equal](name: String, monoid: A)(f: (Monoid[A], A) => Boolean): Result = {
+    Result.diffNamed(s"=== $name Not true ===", Monoid[A], monoid)(f)
   }
 
-  def testNonZero[A : Monoid : Equal](genA: Gen[A]): Property = for {
+  def propertyTestMonoidFunction[A : Monoid : Equal](name: String, genA: Gen[A])(f: (Monoid[A], A) => Boolean): Property = for {
     monoid <- genA.log("monoid")
   } yield {
-    Result.diffNamed("=== isZero Not false ===", Monoid[A], monoid)(!_.isZero(_))
+    Result.diffNamed(s"=== $name Not false ===", Monoid[A], monoid)(f)
   }
 
   object ListMonoidLaws {
