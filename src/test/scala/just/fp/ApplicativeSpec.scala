@@ -39,7 +39,7 @@ object ApplicativeSpec extends Properties {
   }
 
   object ListApplicativeLaws {
-    def genList: Gen[List[Int]] = Gens.genList(Gens.genIntFromMinToMax, 20)
+    def genList: Gen[List[Int]] = Gens.genList(Gens.genIntFromMinToMax, 0, 20)
 
     def laws: Property =
       Specs.applicativeLaws.laws[List](
@@ -50,7 +50,7 @@ object ApplicativeSpec extends Properties {
   }
 
   object VectorApplicativeLaws {
-    def genVector: Gen[Vector[Int]] = Gens.genVector(Gens.genIntFromMinToMax, 20)
+    def genVector: Gen[Vector[Int]] = Gens.genVector(Gens.genIntFromMinToMax, 0, 20)
 
     def laws: Property =
       Specs.applicativeLaws.laws[Vector](

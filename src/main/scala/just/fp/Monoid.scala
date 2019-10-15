@@ -9,6 +9,10 @@ import just.fp.SemiGroup.{BigDecimalSemiGroup, BigIntSemiGroup, ByteSemiGroup, C
 trait Monoid[A] extends SemiGroup[A] {
   def zero: A
 
+  def isZero(a: A)(implicit E: Equal[A]): Boolean = Equal[A].equal(a, zero)
+
+  def nonZero(a: A)(implicit E: Equal[A]): Boolean = !isZero(a)
+
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   trait MonoidLaw {
     /*
@@ -34,6 +38,8 @@ trait Monoid[A] extends SemiGroup[A] {
 }
 
 object Monoid extends OptionMonoidInstance {
+
+  @inline final def apply[A : Monoid]: Monoid[A] = implicitly[Monoid[A]]
 
   implicit def listMonoid[A]: Monoid[List[A]] = new Monoid[List[A]] with ListSemiGroup[A] {
     override def zero: List[A] = Nil

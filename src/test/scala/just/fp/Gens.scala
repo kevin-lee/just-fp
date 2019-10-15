@@ -176,28 +176,34 @@ object Gens {
     (x, y)
   }
 
-  def genBigInt: Gen[BigInt] =
-    genLongFromMinToMax.map(BigInt(_))
+  def genBigIntFromMinToMaxLong: Gen[BigInt] =
+    genBigInt(Long.MinValue, Long.MaxValue)
+
+  def genBigInt(min: Long, max: Long): Gen[BigInt] =
+    genLong(min, max).map(BigInt(_))
 
   def genDifferentBigIntPair: Gen[(BigInt, BigInt)] = for {
-    n1 <- genBigInt
-    n2 <- genBigInt.map(x => if (x === n1) x + BigInt(1) else x)
+    n1 <- genBigIntFromMinToMaxLong
+    n2 <- genBigIntFromMinToMaxLong.map(x => if (x === n1) x + BigInt(1) else x)
   } yield {
     (n1, n2)
   }
 
-  def genBigDecimal: Gen[BigDecimal] =
+  def genBigDecimalFromMinToMaxFloatLong: Gen[BigDecimal] =
+    genBigDecimal(Float.MinValue, Float.MaxValue, Long.MinValue, Long.MaxValue)
+
+  def genBigDecimal(min: Float, max: Float, longMin: Long, longMax: Long): Gen[BigDecimal] =
     Gen.choice1(
         /*
          * MathContext.UNLIMITED should be used due to https://github.com/scala/bug/issues/11590
          */
-        genDoubleFromMinToMax.map(BigDecimal(_, java.math.MathContext.UNLIMITED))
-      , genBigInt.map(BigDecimal(_, java.math.MathContext.UNLIMITED))
+        genDouble(min.toDouble, max.toDouble).map(BigDecimal(_, java.math.MathContext.UNLIMITED))
+      , genBigInt(longMin, longMax).map(BigDecimal(_, java.math.MathContext.UNLIMITED))
       )
 
   def genDifferentBigDecimalPair: Gen[(BigDecimal, BigDecimal)] = for {
-    n1 <- genBigDecimal
-    n2 <- genBigDecimal.map(x => if (x === n1) x + BigDecimal(1) else x)
+    n1 <- genBigDecimalFromMinToMaxFloatLong
+    n2 <- genBigDecimalFromMinToMaxFloatLong.map(x => if (x === n1) x + BigDecimal(1) else x)
   } yield {
     (n1, n2)
   }
@@ -205,11 +211,11 @@ object Gens {
   def genAToMonadA[M[_], A](genF: Gen[A => A])(implicit m: Monad[M]): Gen[A => M[A]] =
     genF.map(f => x => m.pure(f(x)))
 
-  def genList[A](genA: Gen[A], length: Int): Gen[List[A]] =
-    genA.list(Range.linear(0, length))
+  def genList[A](genA: Gen[A], min: Int, max: Int): Gen[List[A]] =
+    genA.list(Range.linear(min, max))
 
-  def genVector[A](genA: Gen[A], length: Int): Gen[Vector[A]] =
-    genA.list(Range.linear(0, length)).map(_.toVector)
+  def genVector[A](genA: Gen[A], min: Int, max: Int): Gen[Vector[A]] =
+    genA.list(Range.linear(min, max)).map(_.toVector)
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   def genFuture[A](

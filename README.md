@@ -3,6 +3,8 @@
 [![Build Status](https://semaphoreci.com/api/v1/kevin-lee/just-fp/branches/master/badge.svg)](https://semaphoreci.com/kevin-lee/just-fp)
 [![Download](https://api.bintray.com/packages/kevinlee/maven/just-fp/images/download.svg)](https://bintray.com/kevinlee/maven/just-fp/_latestVersion)
 
+[![Coverage Status](https://coveralls.io/repos/github/Kevin-Lee/just-fp/badge.svg?branch=master)](https://coveralls.io/github/Kevin-Lee/just-fp?branch=master)
+
 A small Functional Programming library. This is not meant to be an alternative to Scalaz or Cats. The reason for having this library is that in your project you don't want to have Scalaz or Cats as its dependency and you only need much smaller set of functional programming features than what Scalaz or Cats offers. So the users of your library can choose Scalaz or Cats to be used with your library.
 
 # Getting Started
@@ -11,7 +13,7 @@ In `build.sbt`,
 ```sbt
 resolvers += "Just Repo" at "https://dl.bintray.com/kevinlee/maven"
 
-libraryDependencies += "kevinlee" %% "just-fp" % "1.3.0"
+libraryDependencies += "kevinlee" %% "just-fp" % "1.3.1"
 ```
 then import
 
@@ -184,7 +186,119 @@ Foo(1) !== Foo(2)
 ```
 
 # Semi-Group
-// To be updated ...
+A semi-group is a typeclass which can apply associative binary operation. So if a type is a semi-group, its binary operation `append` can be applied. It's associative so `SemiGroup[A].append(SemiGroup[A].append(a, b), c)` is equal to `SemiGroup[A].append(a, SemiGroup[A].append(b, c))`
+
+e.g.)
+```scala
+def foo[A](x: Int, y: Int, f: Int => A)(implicit S: SemiGroup[A]): A =
+  S.append(f(x), f(y))
+
+// or with context bound
+def foo[A: SemiGroup](x: Int, y: Int, f: Int => A): A =
+  implicitly[SemiGroup[A]].append(f(x), f(y))
+```
+
+If there is a typeclass instance of `SemiGroup` for a type `A`, `mappend` method or a convenient `|+|` infix operator can be used like this.
+
+e.g.) There is already a SemiGroup typeclass instance for `Int` in `just-fp` so you can do
+```scala
+1.mappend(2)
+// Int = 3
+
+1 |+| 2
+// Int = 3
+``` 
+
+Typeclass instances for the following typeclasses are available in `just-fp`.
+* `SemiGroup[List[A]]`
+  ```scala
+  List(1, 2, 3) |+| List(4, 5, 6)
+  // List[Int] = List(1, 2, 3, 4, 5, 6)
+  
+  List(1, 2, 3).mappend(List(4, 5, 6))
+  // List[Int] = List(1, 2, 3, 4, 5, 6)
+  ```
+* `SemiGroup[Vector[A]]`
+  ```scala
+  Vector(1, 2, 3) |+| Vector(4, 5, 6)
+  // Vector[Int] = Vector(1, 2, 3, 4, 5, 6)
+  
+  Vector(1, 2, 3).mappend(Vector(4, 5, 6))
+  // Vector[Int] = Vector(1, 2, 3, 4, 5, 6)
+  ```
+* `SemiGroup[String]`
+  ```scala
+  "abc" |+| "def"
+  // String = "abcdef"
+  
+  "abc".mappend("def")
+  // String = "abcdef"
+  ```
+* `SemiGroup[Byte]`
+  ```scala
+  1.toByte |+| 2.toByte
+  // Byte = 3
+  
+  1.toByte.mappend(2.toByte)
+  // Byte = 3
+  ```
+* `SemiGroup[Short]`
+  ```scala
+  1.toShort |+| 2.toShort
+  // Short = 3
+  
+  1.toShort.mappend(2.toShort)
+  // Short = 3
+  ```
+* `SemiGroup[Char]`
+  ```scala
+  'A' |+| '1'
+  // Char = 'r'
+
+  'A'.mappend('1')
+  // Char = 'r'
+  ```
+* `SemiGroup[Int]`
+  ```scala
+  1 |+| 2
+  // Int = 3
+  
+  1.mappend(2)
+  // Int = 3
+  ```
+* `SemiGroup[Long]`
+  ```scala
+  1L |+| 2L
+  // Long = 3L
+  
+  1L.mappend(2L)
+  // Long = 3L
+  ```
+* `SemiGroup[BigInt]`
+  ```scala
+  BigInt(1) |+| BigInt(2)
+  // BigInt = 3
+  
+  BigInt(1).mappend(BigInt(2))
+  // BigInt = 3
+  ```
+* `SemiGroup[BigDecimal]`
+  ```scala
+  BigDecimal(1) |+| BigDecimal(2)
+  // BigDecimal = 3
+  
+  BigDecimal(1).mappend(BigDecimal(2))
+  // BigDecimal = 3
+  ```
+* `SemiGroup[Option[A]]` if there is a typeclass instance of `SemiGroup[A]`.
+  ```scala
+  1.some |+| 2.some
+  // Option[Int] = Some(3)
+  
+  1.some.mappend(2.some)
+  // Option[Int] = Some(3)
+  ```
+  NOTE: There might be an associativity issue with `BigDecimal` if it's created with other `MathContext` than `MathContext.UNLIMITED` and the number is big enough in Scala 2.13. More about the issue please read [this blog](https://blog.kevinlee.io/2019/09/29/be-careful-when-using-bigdecimal-in-scala-2.13).
 
 # Monoid
 // To be updated ...

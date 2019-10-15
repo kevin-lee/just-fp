@@ -41,7 +41,7 @@ object MonadSpec extends Properties {
   }
 
   object ListMonadLaws {
-    def genList: Gen[List[Int]] = Gens.genList(Gens.genIntFromMinToMax, 20)
+    def genList: Gen[List[Int]] = Gens.genList(Gens.genIntFromMinToMax, 0, 20)
 
     def laws: Property =
       Specs.monadLaws.laws[List](
@@ -53,7 +53,7 @@ object MonadSpec extends Properties {
   }
 
   object VectorMonadLaws {
-    def genVector: Gen[Vector[Int]] = Gens.genVector(Gens.genIntFromMinToMax, 20)
+    def genVector: Gen[Vector[Int]] = Gens.genVector(Gens.genIntFromMinToMax, 0, 20)
 
     def laws: Property =
       Specs.monadLaws.laws[Vector](
