@@ -195,7 +195,7 @@ def foo[A](x: Int, y: Int, f: Int => A)(implicit S: SemiGroup[A]): A =
 
 // or with context bound
 def foo[A: SemiGroup](x: Int, y: Int, f: Int => A): A =
-  implicitly[SemiGroup[A]].append(f(x), f(y))
+  SemiGroup[A].append(f(x), f(y))
 ```
 
 If there is a typeclass instance of `SemiGroup` for a type `A`, `mappend` method or a convenient `|+|` infix operator can be used like this.
@@ -301,7 +301,73 @@ Typeclass instances for the following typeclasses are available in `just-fp`.
   NOTE: There might be an associativity issue with `BigDecimal` if it's created with other `MathContext` than `MathContext.UNLIMITED` and the number is big enough in Scala 2.13. More about the issue please read [this blog](https://blog.kevinlee.io/2019/09/29/be-careful-when-using-bigdecimal-in-scala-2.13).
 
 # Monoid
-// To be updated ...
+`Monoid` is a `SemiGroup` with identity element which guarantees that `Monoid` complies with left identity law and right identity law.
+
+```scala
+// Left identity
+Monoid[A].append(Monoid[A].zero, A) // is just A
+
+// So
+Monoid[List[Int]].append(Monoid[List[Int]].zero, List(1, 2, 3))
+// List[Int] = List(1, 2, 3)
+// The same as
+Monoid[List[Int]].append(List.empty, List(1, 2, 3))
+
+Monoid[Int].append(Monoid[Int].zero, 999)
+// Int = 999
+// The same as
+Monoid[Int].append(0, 999)
+
+Monoid[String].zero |+| "abc"
+// String = "abc"
+// The same as
+"" |+| "abc"
+
+Monoid[Option[Int]].zero.mappend(123.some)
+// Option[Int] = Some(123)
+// The same as
+none[Int].mappend(123.some)
+```
+```scala
+// Right identity
+Monoid[A].append(A, Monoid[A].zero) // is just A
+
+// So
+Monoid[List[Int]].append(List(1, 2, 3), Monoid[List[Int]].zero)
+// List[Int] = List(1, 2, 3)
+// The same as
+Monoid[List[Int]].append(List(1, 2, 3), List.empty)
+
+Monoid[Int].append(999, Monoid[Int].zero)
+// Int = 999
+// The same as
+Monoid[Int].append(999, 0)
+
+"abc" |+| Monoid[String].zero
+// String = "abc"
+// The same as
+"abc" |+| ""
+
+123.some.mappend(Monoid[Option[Int]].zero)
+// Option[Int] = Some(123)
+// The same as
+123.some.mappend(none[Int])
+```
+
+Example use of `Monoid`
+```scala
+def fold[A : Monoid](as: List[A]): A =
+  as.foldLeft(Monoid[A].zero)(_ |+| _)
+
+fold(List(1, 2, 3, 4, 5))
+// Int = 15
+
+fold(List("abc", "def", "ghi"))
+// String = "abcdefghi"
+
+fold(List(1.some, 2.some, none, 4.some, 5.some, none))
+// Option[Int] = Some(12)
+```
 
 # Functor
 // To be updated ...
