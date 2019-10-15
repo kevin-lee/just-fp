@@ -11,6 +11,8 @@ trait Monoid[A] extends SemiGroup[A] {
 
   def isZero(a: A)(implicit E: Equal[A]): Boolean = Equal[A].equal(a, zero)
 
+  def nonZero(a: A)(implicit E: Equal[A]): Boolean = !isZero(a)
+
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   trait MonoidLaw {
     /*
