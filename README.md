@@ -13,7 +13,7 @@ In `build.sbt`,
 ```sbt
 resolvers += "Just Repo" at "https://dl.bintray.com/kevinlee/maven"
 
-libraryDependencies += "kevinlee" %% "just-fp" % "1.3.0"
+libraryDependencies += "kevinlee" %% "just-fp" % "1.3.1"
 ```
 then import
 
