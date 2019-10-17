@@ -5,7 +5,7 @@ import org.scoverage.coveralls.Imports.CoverallsKeys.coverallsTokenFile
 
 ThisBuild / scalaVersion     := ProjectScalaVersion
 ThisBuild / version          := ProjectVersion
-ThisBuild / organization     := "kevinlee"
+ThisBuild / organization     := "io.kevinlee"
 ThisBuild / crossScalaVersions := CrossScalaVersions
 ThisBuild / developers   := List(
       Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
@@ -57,6 +57,6 @@ lazy val justFp = (project in file("."))
     case _ =>
       true
   })
-  , coverallsTokenFile := Option(s"""${Path.userHome.absolutePath}/.coveralls-credentials""")
+//  , coverallsTokenFile := Option(s"""${Path.userHome.absolutePath}/.coveralls-credentials""")
   /* } Coveralls */
 )
