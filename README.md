@@ -1,6 +1,7 @@
 # just-fp
 
-[![Build Status](https://semaphoreci.com/api/v1/kevin-lee/just-fp/branches/master/badge.svg)](https://semaphoreci.com/kevin-lee/just-fp)
+[![Build Status](https://github.com/Kevin-Lee/just-fp/workflows/Build%20All/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions)
+[![Release Status](https://github.com/Kevin-Lee/just-fp/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions)
 [![Download](https://api.bintray.com/packages/kevinlee/maven/just-fp/images/download.svg)](https://bintray.com/kevinlee/maven/just-fp/_latestVersion)
 
 [![Coverage Status](https://coveralls.io/repos/github/Kevin-Lee/just-fp/badge.svg?branch=master)](https://coveralls.io/github/Kevin-Lee/just-fp?branch=master)
