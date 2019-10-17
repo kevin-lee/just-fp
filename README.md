@@ -1,7 +1,7 @@
 # just-fp
 
-[![Build Status](https://github.com/Kevin-Lee/just-fp/workflows/Build%20All/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions)
-[![Release Status](https://github.com/Kevin-Lee/just-fp/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions)
+[![Build Status](https://github.com/Kevin-Lee/just-fp/workflows/Build%20All/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions?workflow=Build+All)
+[![Release Status](https://github.com/Kevin-Lee/just-fp/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions?workflow=Release)
 [![Download](https://api.bintray.com/packages/kevinlee/maven/just-fp/images/download.svg)](https://bintray.com/kevinlee/maven/just-fp/_latestVersion)
 
 [![Coverage Status](https://coveralls.io/repos/github/Kevin-Lee/just-fp/badge.svg?branch=master)](https://coveralls.io/github/Kevin-Lee/just-fp?branch=master)
