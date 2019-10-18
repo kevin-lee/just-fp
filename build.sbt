@@ -1,7 +1,6 @@
 import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import kevinlee.semver.{Major, Minor, SemanticVersion}
-import org.scoverage.coveralls.Imports.CoverallsKeys.coverallsTokenFile
 
 ThisBuild / scalaVersion     := ProjectScalaVersion
 ThisBuild / version          := ProjectVersion
@@ -10,6 +9,12 @@ ThisBuild / crossScalaVersions := CrossScalaVersions
 ThisBuild / developers   := List(
       Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
     )
+ThisBuild / homepage := Some(url("https://github.com/Kevin-Lee/just-fp"))
+ThisBuild / scmInfo :=
+    Some(ScmInfo(
+        url("https://github.com/Kevin-Lee/just-fp")
+      , "git@github.com:Kevin-Lee/just-fp.git"
+      ))
 
 lazy val justFp = (project in file("."))
   .enablePlugins(DevOopsGitReleasePlugin)
@@ -54,6 +59,5 @@ lazy val justFp = (project in file("."))
     case _ =>
       true
   })
-//  , coverallsTokenFile := Option(s"""${Path.userHome.absolutePath}/.coveralls-credentials""")
   /* } Coveralls */
 )
