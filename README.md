@@ -12,9 +12,7 @@ A small Functional Programming library. This is not meant to be an alternative t
 In `build.sbt`,
 
 ```sbt
-resolvers += "Just Repo" at "https://dl.bintray.com/kevinlee/maven"
-
-libraryDependencies += "io.kevinlee" %% "just-fp" % "1.3.2"
+libraryDependencies += "io.kevinlee" %% "just-fp" % "1.3.3"
 ```
 then import
 
