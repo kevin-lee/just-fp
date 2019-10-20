@@ -3,7 +3,7 @@ name: Task template
 about: For a task ticket
 title: ''
 labels: task
-assignees: ''
+assignees: 'Kevin-Lee'
 
 ---
 
