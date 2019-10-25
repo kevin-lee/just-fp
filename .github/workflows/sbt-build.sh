@@ -6,15 +6,15 @@ if [ -z "$1" ]
   then
     echo "Scala version is missing. Please enter the Scala version."
     echo "sbt-build.sh 2.11.12"
+    exit 1
 else
   scala_version=$1
   echo "============================================"
   echo "Build projects"
   echo "--------------------------------------------"
   echo ""
-  CURRENT_BRANCH_NAME="${GITHUB_REF#refs/heads/}"
-  export CI_BRANCH=$CURRENT_BRANCH_NAME
-  if [[ "$CURRENT_BRANCH_NAME" == "master" || "$CURRENT_BRANCH_NAME" == "release" ]]
+  export CI_BRANCH="${GITHUB_REF#refs/heads/}"
+  if [[ "$CI_BRANCH" == "master" || "$CI_BRANCH" == "release" ]]
   then
     sbt -J-Xmx2048m "; ++ ${scala_version}!; clean; coverage; test; coverageReport; coverageAggregate"
     sbt -J-Xmx2048m "; ++ ${scala_version}!; coveralls"
