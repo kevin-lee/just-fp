@@ -15,7 +15,7 @@ A small Functional Programming library. This is not meant to be an alternative t
 In `build.sbt`,
 
 ```sbt
-libraryDependencies += "io.kevinlee" %% "just-fp" % "1.3.4"
+libraryDependencies += "io.kevinlee" %% "just-fp" % "1.3.5"
 ```
 then import
 
