@@ -24,6 +24,13 @@ jobs:
         BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
         BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
       run: |
+        PROJECT_VERSION="${GITHUB_REF#refs/tags/v}"
+        BINTRAY_SUBJECT=kevinlee
+        BINTRAY_REPO=maven
+        BINTRAY_PACKAGE=just-fp
+        echo "PROJECT_VERSION: $PROJECT_VERSION"
         echo "Run] sbt GitHub release"
         echo 'sbt -J-Xmx2048m "; clean; +publish"'
         sbt -J-Xmx2048m "; clean; +publish"
+        echo "Maven Central Sync..."
+        curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$BINTRAY_PACKAGE/versions/$PROJECT_VERSION"
