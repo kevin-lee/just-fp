@@ -2,19 +2,32 @@ import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import kevinlee.semver.{Major, Minor, SemanticVersion}
 
+val ProjectScalaVersion: String = "2.13.1"
+val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
+
+val hedgehogVersion = "6dba7c9ba065e423000e9aa2b6981ce3d70b74cb"
+val hedgehogRepo: MavenRepository =
+  "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
+
+val hedgehogLibs: Seq[ModuleID] = Seq(
+    "hedgehog" %% "hedgehog-core" % hedgehogVersion % Test
+  , "hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test
+  , "hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
+  )
+
 ThisBuild / scalaVersion     := ProjectScalaVersion
 ThisBuild / version          := ProjectVersion
 ThisBuild / organization     := "io.kevinlee"
 ThisBuild / crossScalaVersions := CrossScalaVersions
 ThisBuild / developers   := List(
-      Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
-    )
+    Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
+  )
 ThisBuild / homepage := Some(url("https://github.com/Kevin-Lee/just-fp"))
 ThisBuild / scmInfo :=
-    Some(ScmInfo(
-        url("https://github.com/Kevin-Lee/just-fp")
-      , "git@github.com:Kevin-Lee/just-fp.git"
-      ))
+  Some(ScmInfo(
+      url("https://github.com/Kevin-Lee/just-fp")
+    , "git@github.com:Kevin-Lee/just-fp.git"
+    ))
 
 lazy val justFp = (project in file("."))
   .enablePlugins(DevOopsGitReleasePlugin)
@@ -30,11 +43,11 @@ lazy val justFp = (project in file("."))
     }
   , resolvers ++= Seq(
         Resolver.sonatypeRepo("releases")
-      , Deps.hedgehogRepo
+      , hedgehogRepo
       )
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
-  , libraryDependencies := Deps.hedgehogLibs ++
-      crossVersionProps(Seq.empty[ModuleID], SemanticVersion.parseUnsafe(scalaVersion.value)) {
+  , libraryDependencies :=
+      crossVersionProps(hedgehogLibs, SemanticVersion.parseUnsafe(scalaVersion.value)) {
         case (Major(2), Minor(10)) =>
           libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
         case x =>
@@ -82,4 +95,4 @@ lazy val justFp = (project in file("."))
       true
   })
   /* } Coveralls */
-)
+  )
