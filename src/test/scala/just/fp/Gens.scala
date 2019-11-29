@@ -235,6 +235,14 @@ object Gens {
       a <- genA
     } yield WriterT(F.pure((w, a)))
 
+  def genOptionT[F[_], A](genA: Gen[A])(implicit F: Monad[F]): Gen[OptionT[F, A]] =
+    genOption(genA).map {
+      case Some(a) =>
+        OptionT.some(a)
+      case None =>
+        OptionT.none
+    }
+
   def genEitherT[F[_], A, B](genA: Gen[A], genB: Gen[B])(implicit F: Monad[F]): Gen[EitherT[F, A, B]] =
     genEither(genA, genB).map {
       case Right(b) =>
