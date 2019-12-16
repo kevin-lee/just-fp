@@ -1,6 +1,7 @@
 import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
-import kevinlee.semver.{Major, Minor, SemanticVersion}
+import just.semver.SemVer
+import SemVer.{Major, Minor}
 
 val ProjectScalaVersion: String = "2.13.1"
 val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
@@ -47,7 +48,7 @@ lazy val justFp = (project in file("."))
       )
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
   , libraryDependencies :=
-      crossVersionProps(hedgehogLibs, SemanticVersion.parseUnsafe(scalaVersion.value)) {
+      crossVersionProps(hedgehogLibs, SemVer.parseUnsafe(scalaVersion.value)) {
         case (Major(2), Minor(10)) =>
           libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
         case x =>
