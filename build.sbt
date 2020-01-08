@@ -34,14 +34,15 @@ ThisBuild / scmInfo :=
 def prefixedProjectName(name: String) = s"just-fp${if (name.isEmpty) "" else s"-$name"}"
 
 lazy val justFp = (project in file("."))
+  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := prefixedProjectName("")
   , description  := "Just FP Lib"
   )
-  .dependsOn(core)
+  .dependsOn(core, docs)
 
 lazy val core = (project in file("core"))
-  .enablePlugins(DevOopsGitReleasePlugin, MicrositesPlugin)
+  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := prefixedProjectName("core")
   , description  := "Just FP Lib - Core"
@@ -106,18 +107,25 @@ lazy val core = (project in file("core"))
       true
   })
   /* } Coveralls */
+  )
 
+lazy val docDir = file("docs")
+lazy val docs = (project in docDir)
+  .enablePlugins(MicrositesPlugin)
+  .settings(
+    name := prefixedProjectName("docs")
   /* microsites { */
+  , micrositeName := prefixedProjectName("")
   , micrositeAuthor := "Kevin Lee"
   , micrositeHomepage := "https://blog.kevinlee.io"
-  , micrositeDescription := description.value
+  , micrositeDescription := "Just FP"
   , micrositeGithubOwner := "Kevin-Lee"
   , micrositeGithubRepo := "just-fp"
   , micrositeBaseUrl := "/just-fp"
   , micrositeDocumentationUrl := s"${micrositeBaseUrl.value}/docs"
   , micrositePushSiteWith := GitHub4s
   , micrositeGithubToken := sys.env.get("GITHUB_TOKEN")
-  //  , micrositeTheme := "pattern"
+    , micrositeTheme := "pattern"
   , micrositeHighlightTheme := "atom-one-light"
   , micrositeGitterChannel := false
   , micrositeGithubLinks := false
@@ -125,19 +133,20 @@ lazy val core = (project in file("core"))
   , micrositeHighlightLanguages ++= Seq("shell")
 
   , micrositeConfigYaml := ConfigYml(
-      yamlPath = Some(baseDirectory.value / "microsite" / "_config.yml")
+      yamlPath = Some(docDir / "microsite" / "_config.yml")
     )
-  , micrositeImgDirectory := baseDirectory.value / "microsite" / "img"
-  , micrositeCssDirectory := baseDirectory.value / "microsite" / "css"
-  , micrositeSassDirectory := baseDirectory.value / "microsite" / "sass"
-  , micrositeJsDirectory := baseDirectory.value / "microsite" / "js"
-  , micrositeExternalLayoutsDirectory := baseDirectory.value / "microsite" / "layouts"
-  , micrositeExternalIncludesDirectory := baseDirectory.value / "microsite" / "includes"
-  , micrositeDataDirectory := baseDirectory.value / "microsite" / "data"
-  , micrositeStaticDirectory := baseDirectory.value / "microsite" / "static"
-  , micrositeExtraMdFilesOutput := baseDirectory.value / "microsite" / "extra_md"
-  , micrositePluginsDirectory := baseDirectory.value / "microsite" / "plugins"
+  , micrositeImgDirectory := docDir / "microsite" / "img"
+  , micrositeCssDirectory := docDir / "microsite" / "css"
+  , micrositeSassDirectory := docDir / "microsite" / "sass"
+  , micrositeJsDirectory := docDir / "microsite" / "js"
+  , micrositeExternalLayoutsDirectory := docDir / "microsite" / "layouts"
+  , micrositeExternalIncludesDirectory := docDir / "microsite" / "includes"
+  , micrositeDataDirectory := docDir / "microsite" / "data"
+  , micrositeStaticDirectory := docDir / "microsite" / "static"
+  , micrositeExtraMdFilesOutput := docDir / "microsite" / "extra_md"
+  , micrositePluginsDirectory := docDir / "microsite" / "plugins"
 
   /* } microsites */
 
   )
+  .dependsOn(core)

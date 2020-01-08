@@ -1,0 +1,15 @@
+options:
+  - title: Getting Started
+    url: docs
+    menu_section: intro-section
+
+  - title: Syntax
+    url: docs/syntax
+    menu_section: syntax-section
+    nested_options:
+     - title: Either
+       url: docs/syntax/either
+     - title: Option
+       url: docs/syntax/option
+     - title: Type-safe Equal
+       url: docs/syntax/type-safe-equal
