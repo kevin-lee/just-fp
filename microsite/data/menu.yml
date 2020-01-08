@@ -2,3 +2,6 @@ options:
   - title: Getting Started
     url: docs/index
     section: intro
+
+  - title: Either
+    url: docs/either
