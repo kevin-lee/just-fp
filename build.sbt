@@ -2,6 +2,7 @@ import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
+import microsites.ConfigYml
 
 val ProjectScalaVersion: String = "2.13.1"
 val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
@@ -40,7 +41,7 @@ lazy val justFp = (project in file("."))
   .dependsOn(core)
 
 lazy val core = (project in file("core"))
-  .enablePlugins(DevOopsGitReleasePlugin)
+  .enablePlugins(DevOopsGitReleasePlugin, MicrositesPlugin)
   .settings(
     name := prefixedProjectName("core")
   , description  := "Just FP Lib - Core"
@@ -105,4 +106,38 @@ lazy val core = (project in file("core"))
       true
   })
   /* } Coveralls */
+
+  /* microsites { */
+  , micrositeAuthor := "Kevin Lee"
+  , micrositeHomepage := "https://blog.kevinlee.io"
+  , micrositeDescription := description.value
+  , micrositeGithubOwner := "Kevin-Lee"
+  , micrositeGithubRepo := "just-fp"
+  , micrositeBaseUrl := "/just-fp"
+  , micrositeDocumentationUrl := s"${micrositeBaseUrl.value}/docs"
+  , micrositePushSiteWith := GitHub4s
+  , micrositeGithubToken := sys.env.get("GITHUB_TOKEN")
+  //  , micrositeTheme := "pattern"
+  , micrositeHighlightTheme := "atom-one-light"
+  , micrositeGitterChannel := false
+  , micrositeGithubLinks := false
+  , micrositeShareOnSocial := false
+  , micrositeHighlightLanguages ++= Seq("shell")
+
+  , micrositeConfigYaml := ConfigYml(
+      yamlPath = Some(baseDirectory.value / "microsite" / "_config.yml")
+    )
+  , micrositeImgDirectory := baseDirectory.value / "microsite" / "img"
+  , micrositeCssDirectory := baseDirectory.value / "microsite" / "css"
+  , micrositeSassDirectory := baseDirectory.value / "microsite" / "sass"
+  , micrositeJsDirectory := baseDirectory.value / "microsite" / "js"
+  , micrositeExternalLayoutsDirectory := baseDirectory.value / "microsite" / "layouts"
+  , micrositeExternalIncludesDirectory := baseDirectory.value / "microsite" / "includes"
+  , micrositeDataDirectory := baseDirectory.value / "microsite" / "data"
+  , micrositeStaticDirectory := baseDirectory.value / "microsite" / "static"
+  , micrositeExtraMdFilesOutput := baseDirectory.value / "microsite" / "extra_md"
+  , micrositePluginsDirectory := baseDirectory.value / "microsite" / "plugins"
+
+  /* } microsites */
+
   )
