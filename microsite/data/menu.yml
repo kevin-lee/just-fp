@@ -8,3 +8,6 @@ options:
 
   - title: Option
     url: docs/option
+
+  - title: Type-safe Equal
+    url: docs/type-safe-equal
