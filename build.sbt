@@ -2,6 +2,7 @@ import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
+import microsites.ConfigYml
 
 val ProjectScalaVersion: String = "2.13.1"
 val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
@@ -33,11 +34,12 @@ ThisBuild / scmInfo :=
 def prefixedProjectName(name: String) = s"just-fp${if (name.isEmpty) "" else s"-$name"}"
 
 lazy val justFp = (project in file("."))
+  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := prefixedProjectName("")
   , description  := "Just FP Lib"
   )
-  .dependsOn(core)
+  .dependsOn(core, docs)
 
 lazy val core = (project in file("core"))
   .enablePlugins(DevOopsGitReleasePlugin)
@@ -106,3 +108,45 @@ lazy val core = (project in file("core"))
   })
   /* } Coveralls */
   )
+
+lazy val docDir = file("docs")
+lazy val docs = (project in docDir)
+  .enablePlugins(MicrositesPlugin)
+  .settings(
+    name := prefixedProjectName("docs")
+  /* microsites { */
+  , micrositeName := prefixedProjectName("")
+  , micrositeAuthor := "Kevin Lee"
+  , micrositeHomepage := "https://blog.kevinlee.io"
+  , micrositeDescription := "Just FP"
+  , micrositeGithubOwner := "Kevin-Lee"
+  , micrositeGithubRepo := "just-fp"
+  , micrositeBaseUrl := "/just-fp"
+  , micrositeDocumentationUrl := s"${micrositeBaseUrl.value}/docs"
+  , micrositePushSiteWith := GitHub4s
+  , micrositeGithubToken := sys.env.get("GITHUB_TOKEN")
+    , micrositeTheme := "pattern"
+  , micrositeHighlightTheme := "atom-one-light"
+  , micrositeGitterChannel := false
+  , micrositeGithubLinks := false
+  , micrositeShareOnSocial := false
+  , micrositeHighlightLanguages ++= Seq("shell")
+
+  , micrositeConfigYaml := ConfigYml(
+      yamlPath = Some(docDir / "microsite" / "_config.yml")
+    )
+  , micrositeImgDirectory := docDir / "microsite" / "img"
+  , micrositeCssDirectory := docDir / "microsite" / "css"
+  , micrositeSassDirectory := docDir / "microsite" / "sass"
+  , micrositeJsDirectory := docDir / "microsite" / "js"
+  , micrositeExternalLayoutsDirectory := docDir / "microsite" / "layouts"
+  , micrositeExternalIncludesDirectory := docDir / "microsite" / "includes"
+  , micrositeDataDirectory := docDir / "microsite" / "data"
+  , micrositeStaticDirectory := docDir / "microsite" / "static"
+  , micrositeExtraMdFilesOutput := docDir / "microsite" / "extra_md"
+  , micrositePluginsDirectory := docDir / "microsite" / "plugins"
+
+  /* } microsites */
+
+  )
+  .dependsOn(core)
