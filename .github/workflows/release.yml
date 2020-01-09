@@ -17,16 +17,16 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
       run: |
         echo "Run] sbt GitHub release"
-        echo 'sbt -J-Xmx2048m "; clean; +test; +packagedArtifacts; gitHubRelease"'
-        sbt -J-Xmx2048m "; clean; +test; +packagedArtifacts; gitHubRelease"
+        echo 'sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts; gitHubRelease"'
+        sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts; gitHubRelease"
     - name: sbt Publish
       env:
         BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
         BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
       run: |
         echo "Run] sbt GitHub release"
-        echo 'sbt -J-Xmx2048m "; clean; +publish"'
-        sbt -J-Xmx2048m "; clean; +publish"
+        echo 'sbt -J-Xmx2048m "; project core; clean; +publish"'
+        sbt -J-Xmx2048m "; project core; clean; +publish"
     - name: Sync to Maven Central
       env:
         BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
@@ -35,10 +35,11 @@ jobs:
         PROJECT_VERSION="${GITHUB_REF#refs/tags/v}"
         BINTRAY_SUBJECT=kevinlee
         BINTRAY_REPO=maven
-        BINTRAY_PACKAGE=just-fp
+        BINTRAY_PACKAGE=just-fp-core
         echo "BINTRAY_SUBJECT: $BINTRAY_SUBJECT"
         echo "   BINTRAY_REPO: $BINTRAY_REPO"
         echo "BINTRAY_PACKAGE: $BINTRAY_PACKAGE"
         echo "PROJECT_VERSION: $PROJECT_VERSION"
-        echo "Sync to Maven Central..."
-        curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$BINTRAY_PACKAGE/versions/$PROJECT_VERSION"
+# Uncomment once Bintray is connected to JCenter
+#        echo "Sync to Maven Central..."
+#        curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$BINTRAY_PACKAGE/versions/$PROJECT_VERSION"

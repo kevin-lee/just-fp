@@ -30,13 +30,22 @@ ThisBuild / scmInfo :=
     , "git@github.com:Kevin-Lee/just-fp.git"
     ))
 
+def prefixedProjectName(name: String) = s"just-fp${if (name.isEmpty) "" else s"-$name"}"
+
 lazy val justFp = (project in file("."))
+  .settings(
+    name := prefixedProjectName("")
+  , description  := "Just FP Lib"
+  )
+  .dependsOn(core)
+
+lazy val core = (project in file("core"))
   .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
-    name := "just-fp"
-  , description  := "Just FP Lib"
+    name := prefixedProjectName("core")
+  , description  := "Just FP Lib - Core"
   , unmanagedSourceDirectories in Compile ++= {
-      val sharedSourceDir = (baseDirectory in ThisBuild).value / "src/main"
+      val sharedSourceDir = baseDirectory.value / "src/main"
       if (scalaVersion.value.startsWith("2.13") || scalaVersion.value.startsWith("2.12"))
         Seq(sharedSourceDir / "scala-2.12_2.13")
       else
