@@ -14,9 +14,11 @@ options:
      - title: Type-safe Equal
        url: docs/syntax/type-safe-equal
 
-  - title: typeclass
+  - title: Typeclass
     url: docs/typeclass
     menu_section: typeclass-section
     nested_options:
       - title: Semi-Group
         url: docs/typeclass/semi-group
+      - title: Monoid
+        url: docs/typeclass/monoid
