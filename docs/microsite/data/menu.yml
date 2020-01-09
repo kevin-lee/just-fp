@@ -22,3 +22,13 @@ options:
         url: docs/typeclass/semi-group
       - title: Monoid
         url: docs/typeclass/monoid
+      - title: Functor
+        url: docs/typeclass/functor
+      - title: Applicative
+        url: docs/typeclass/applicative
+      - title: Monad
+        url: docs/typeclass/monad
+      - title: WriterT / Writer
+        url: docs/typeclass/writer-t
+      - title: EitherT
+        url: docs/typeclass/either-t
