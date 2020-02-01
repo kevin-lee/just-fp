@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Type-safe Equal
+title: "Type-safe Equal"
 ---
 
 # Type-safe Equal

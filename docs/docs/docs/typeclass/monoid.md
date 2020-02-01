@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Monoid
+title: "Monoid"
 ---
 # Monoid
 `Monoid` is a `SemiGroup` with identity element which guarantees that 

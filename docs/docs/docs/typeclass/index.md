@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: typeclass
+title: "Typeclass"
 ---
 # Typeclass
 

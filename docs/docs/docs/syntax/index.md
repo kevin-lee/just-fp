@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Syntax
+title: "Syntax"
 ---
 # Syntax
 
