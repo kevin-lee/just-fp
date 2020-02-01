@@ -1,5 +1,5 @@
 ---
 layout: docs
-title: EitherT
+title: "EitherT"
 ---
 # EitherT

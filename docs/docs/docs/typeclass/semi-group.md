@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Semi-Group
+title: "Semi-Group"
 ---
 
 # Semi-Group

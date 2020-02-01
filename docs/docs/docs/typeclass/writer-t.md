@@ -1,5 +1,5 @@
 ---
 layout: docs
-title: WriterT
+title: "WriterT"
 ---
 # WriterT

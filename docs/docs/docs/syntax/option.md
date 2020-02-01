@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Option
+title: "Option"
 ---
 
 # Option

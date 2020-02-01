@@ -1,5 +1,5 @@
 ---
 layout: docs
-title: Functor
+title: "Functor"
 ---
 # Functor
