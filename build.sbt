@@ -73,7 +73,7 @@ lazy val core = (project in file("core"))
         case "2.11" =>
           Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
         case _ =>
-          Seq("com.lihaoyi" % "ammonite" % "1.7.4" % Test cross CrossVersion.full)
+          Seq("com.lihaoyi" % "ammonite" % "2.0.4" % Test cross CrossVersion.full)
       })
   , sourceGenerators in Test +=
       (scalaBinaryVersion.value match {
