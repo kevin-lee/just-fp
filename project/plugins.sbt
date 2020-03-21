@@ -10,4 +10,4 @@ addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.2.7")
 
 addSbtPlugin("io.kevinlee" % "sbt-devoops" % "1.0.3")
 
-addSbtPlugin("com.47deg" % "sbt-microsites" % "1.0.2")
+addSbtPlugin("com.47deg" % "sbt-microsites" % "1.1.4")
