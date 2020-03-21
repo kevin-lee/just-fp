@@ -5,7 +5,7 @@ import SemVer.{Major, Minor}
 import microsites.ConfigYml
 
 val ProjectScalaVersion: String = "2.13.1"
-val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
+val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.11", ProjectScalaVersion)
 
 val hedgehogVersion = "6dba7c9ba065e423000e9aa2b6981ce3d70b74cb"
 val hedgehogRepo: MavenRepository =
@@ -72,6 +72,8 @@ lazy val core = (project in file("core"))
           Seq.empty[ModuleID]
         case "2.11" =>
           Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
+        case "2.12" =>
+          Seq.empty[ModuleID] // TODO: add ammonite when it supports Scala 2.12.11
         case _ =>
           Seq("com.lihaoyi" % "ammonite" % "2.0.4" % Test cross CrossVersion.full)
       })
@@ -79,6 +81,8 @@ lazy val core = (project in file("core"))
       (scalaBinaryVersion.value match {
         case "2.10" =>
           task(Seq.empty[File])
+        case "2.12" =>
+          task(Seq.empty[File]) // TODO: add ammonite when it supports Scala 2.12.11
         case _ =>
           task {
             val file = (sourceManaged in Test).value / "amm.scala"
