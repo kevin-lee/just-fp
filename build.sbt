@@ -7,14 +7,15 @@ import microsites.ConfigYml
 val ProjectScalaVersion: String = "2.13.1"
 val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.11", ProjectScalaVersion)
 
-val hedgehogVersion = "6dba7c9ba065e423000e9aa2b6981ce3d70b74cb"
+val hedgehogVersionFor2_10 = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
+val hedgehogVersion = "97854199ef795a5dfba15478fd9abe66035ddea2"
 val hedgehogRepo: MavenRepository =
   "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
-val hedgehogLibs: Seq[ModuleID] = Seq(
-    "hedgehog" %% "hedgehog-core" % hedgehogVersion % Test
-  , "hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test
-  , "hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
+def hedgehogLibs(hedgehogVersion: String): Seq[ModuleID] = Seq(
+    "qa.hedgehog" %% "hedgehog-core" % hedgehogVersion % Test
+  , "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test
+  , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
 ThisBuild / scalaVersion     := ProjectScalaVersion
@@ -59,11 +60,15 @@ lazy val core = (project in file("core"))
       )
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
   , libraryDependencies :=
-      crossVersionProps(hedgehogLibs, SemVer.parseUnsafe(scalaVersion.value)) {
+      crossVersionProps(List.empty, SemVer.parseUnsafe(scalaVersion.value)) {
         case (Major(2), Minor(10)) =>
-          libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
+          hedgehogLibs(hedgehogVersionFor2_10) ++
+            libraryDependencies.value.filterNot(
+              m => m.organization == "org.wartremover" && m.name == "wartremover"
+            )
         case x =>
-          libraryDependencies.value
+          hedgehogLibs(hedgehogVersion) ++
+            libraryDependencies.value
       }
   /* Ammonite-REPL { */
   , libraryDependencies ++=
