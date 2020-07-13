@@ -7,6 +7,15 @@ import microsites.ConfigYml
 val ProjectScalaVersion: String = "2.13.1"
 val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.11", ProjectScalaVersion)
 
+def prefixedProjectName(name: String) = s"just-fp${if (name.isEmpty) "" else s"-$name"}"
+
+lazy val noPublish = Seq(
+  publish := {},
+  publishLocal := {},
+  publishArtifact := false,
+  skip in publish := true
+)
+
 val hedgehogVersionFor2_10 = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
 val hedgehogVersion = "97854199ef795a5dfba15478fd9abe66035ddea2"
 val hedgehogRepo: MavenRepository =
@@ -21,7 +30,6 @@ def hedgehogLibs(hedgehogVersion: String): Seq[ModuleID] = Seq(
 ThisBuild / scalaVersion     := ProjectScalaVersion
 ThisBuild / version          := ProjectVersion
 ThisBuild / organization     := "io.kevinlee"
-ThisBuild / crossScalaVersions := CrossScalaVersions
 ThisBuild / developers   := List(
     Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
   )
@@ -32,14 +40,13 @@ ThisBuild / scmInfo :=
     , "git@github.com:Kevin-Lee/just-fp.git"
     ))
 
-def prefixedProjectName(name: String) = s"just-fp${if (name.isEmpty) "" else s"-$name"}"
-
 lazy val justFp = (project in file("."))
   .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := prefixedProjectName("")
   , description  := "Just FP Lib"
   )
+  .settings(noPublish)
   .dependsOn(core, docs)
 
 lazy val core = (project in file("core"))
@@ -47,6 +54,7 @@ lazy val core = (project in file("core"))
   .settings(
     name := prefixedProjectName("core")
   , description  := "Just FP Lib - Core"
+  , crossScalaVersions := CrossScalaVersions
   , unmanagedSourceDirectories in Compile ++= {
       val sharedSourceDir = baseDirectory.value / "src/main"
       if (scalaVersion.value.startsWith("2.13") || scalaVersion.value.startsWith("2.12"))
@@ -55,8 +63,7 @@ lazy val core = (project in file("core"))
         Seq(sharedSourceDir / "scala-2.10_2.11")
     }
   , resolvers ++= Seq(
-        Resolver.sonatypeRepo("releases")
-      , hedgehogRepo
+        hedgehogRepo
       )
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
   , libraryDependencies :=
@@ -127,6 +134,7 @@ lazy val core = (project in file("core"))
 lazy val docDir = file("docs")
 lazy val docs = (project in docDir)
   .enablePlugins(MicrositesPlugin)
+  .settings(noPublish)
   .settings(
     name := prefixedProjectName("docs")
   /* microsites { */
