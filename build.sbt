@@ -47,7 +47,7 @@ lazy val justFp = (project in file("."))
   , description  := "Just FP Lib"
   )
   .settings(noPublish)
-  .dependsOn(core, docs)
+  .aggregate(core, docs)
 
 lazy val core = (project in file("core"))
   .enablePlugins(DevOopsGitReleasePlugin)
