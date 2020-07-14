@@ -15,7 +15,7 @@ else
   echo "--------------------------------------------"
   echo ""
   export CI_BRANCH="${GITHUB_REF#refs/heads/}"
-  if [[ "$CI_BRANCH" == "master" || "$CI_BRANCH" == "release" ]]
+  if [[ "$CI_BRANCH" == "main" || "$CI_BRANCH" == "release" ]]
   then
     sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}!; clean; coverage; test; coverageReport; coverageAggregate"
     sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}!; coveralls"
