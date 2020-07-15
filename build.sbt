@@ -17,7 +17,7 @@ lazy val noPublish = Seq(
 )
 
 val hedgehogVersionFor2_10 = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
-val hedgehogVersion = "97854199ef795a5dfba15478fd9abe66035ddea2"
+val hedgehogVersion = "1bdfed24d9a58914fb78c1f4bea19bf8886d163f"
 val hedgehogRepo: MavenRepository =
   "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
