@@ -1,9 +1,9 @@
 ---
-layout: docs
+id: 'either'
 title: "Either"
 ---
 
-# Either
+## Either
 
 ## Right-Biased `Either`
 `Either` in Scala prior to 2.12 is not right-biased meaning that you have to call `Either.right` all the time if you want to use it with `for-comprehension`.

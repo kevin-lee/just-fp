@@ -1,8 +1,8 @@
 ---
-layout: docs
+id: 'functor'
 title: "Functor"
 ---
-# Functor
+## Functor
 A `functor` is a typeclass for the types that can be mapped over.
 
 `Functor` complies with identity law and composition law.
@@ -31,13 +31,20 @@ import just.fp.syntax._
 val f = (a: Int) => a + 100
 val g = (b: Int) => b * 2
 
-Functor[Option].map(1.some)(f compose g) === Functor[Option].map(Functor[Option].map(1.some)(g))(f)
 Functor[Option].map(1.some)(f compose g)
+
 Functor[Option].map(Functor[Option].map(1.some)(g))(f)
 
-Functor[Option].map(none[Int])(f compose g) === Functor[Option].map(Functor[Option].map(none[Int])(g))(f)
+Functor[Option].map(1.some)(f compose g) ===
+  Functor[Option].map(Functor[Option].map(1.some)(g))(f)
+
+
 Functor[Option].map(none[Int])(f compose g)
+
 Functor[Option].map(Functor[Option].map(none[Int])(g))(f)
+
+Functor[Option].map(none[Int])(f compose g) ===
+  Functor[Option].map(Functor[Option].map(none[Int])(g))(f)
 ```
 
 

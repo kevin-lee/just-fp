@@ -1,5 +1,5 @@
 ---
-layout: docs
+id: 'semi-group'
 title: "Semi-Group"
 ---
 

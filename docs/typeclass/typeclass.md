@@ -1,8 +1,8 @@
 ---
-layout: docs
+id: 'typeclass'
 title: "Typeclass"
 ---
-# Typeclass
+## Typeclass
 
 * [Semi-Group](semi-group)
 * [Monoid](monoid)

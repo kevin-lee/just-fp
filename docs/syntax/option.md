@@ -1,9 +1,9 @@
 ---
-layout: docs
+id: 'option'
 title: "Option"
 ---
 
-# Option
+## Option
 ## Option Constructors
 Similar to `Either`, creating `Option` can expose its data instead of type.
 

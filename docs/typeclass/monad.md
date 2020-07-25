@@ -1,5 +1,5 @@
 ---
-layout: docs
+id: 'monad'
 title: "Monad"
 ---
 # Monad
