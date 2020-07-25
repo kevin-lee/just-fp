@@ -1,5 +1,5 @@
 ---
-layout: docs
+id: 'monoid'
 title: "Monoid"
 ---
 # Monoid

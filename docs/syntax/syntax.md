@@ -1,5 +1,5 @@
 ---
-layout: docs
+id: 'syntax'
 title: "Syntax"
 ---
 # Syntax

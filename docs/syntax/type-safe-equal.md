@@ -1,9 +1,9 @@
 ---
-layout: docs
+id: 'type-safe-equal'
 title: "Type-safe Equal"
 ---
 
-# Type-safe Equal
+## Type-safe Equal
 `==` in Scala is not type safe so the following code can never be `true` as their types are different but it has no compile-time error.
 
 ```scala
