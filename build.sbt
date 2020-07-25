@@ -7,7 +7,11 @@ import microsites.ConfigYml
 val ProjectScalaVersion: String = "2.13.1"
 val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.11", ProjectScalaVersion)
 
-def prefixedProjectName(name: String) = s"just-fp${if (name.isEmpty) "" else s"-$name"}"
+val GitHubUsername = "Kevin-Lee"
+val RepoName = "just-fp"
+val ProjectName = RepoName
+
+def prefixedProjectName(name: String) = s"$ProjectName${if (name.isEmpty) "" else s"-$name"}"
 
 lazy val noPublish = Seq(
   publish := {},
@@ -31,23 +35,14 @@ ThisBuild / scalaVersion     := ProjectScalaVersion
 ThisBuild / version          := ProjectVersion
 ThisBuild / organization     := "io.kevinlee"
 ThisBuild / developers   := List(
-    Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
+    Developer(GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url(s"https://github.com/$GitHubUsername"))
   )
-ThisBuild / homepage := Some(url("https://github.com/Kevin-Lee/just-fp"))
+ThisBuild / homepage := Some(url(s"https://github.com/$GitHubUsername/$RepoName"))
 ThisBuild / scmInfo :=
   Some(ScmInfo(
-      url("https://github.com/Kevin-Lee/just-fp")
-    , "git@github.com:Kevin-Lee/just-fp.git"
+      url(s"https://github.com/$GitHubUsername/$RepoName")
+    , s"git@github.com:$GitHubUsername/$RepoName.git"
     ))
-
-lazy val justFp = (project in file("."))
-  .enablePlugins(DevOopsGitReleasePlugin)
-  .settings(
-    name := prefixedProjectName("")
-  , description  := "Just FP Lib"
-  )
-  .settings(noPublish)
-  .aggregate(core, docs)
 
 lazy val core = (project in file("core"))
   .enablePlugins(DevOopsGitReleasePlugin)
@@ -114,7 +109,7 @@ lazy val core = (project in file("core"))
   , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
   /* Bintray { */
   , bintrayPackageLabels := Seq("Scala", "Functional Programming", "FP")
-  , bintrayVcsUrl := Some("""git@github.com:Kevin-Lee/just-fp.git""")
+  , bintrayVcsUrl := Some(s"""git@github.com:$GitHubUsername/$RepoName.git""")
   , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
   /* } Bintray */
 
@@ -131,45 +126,68 @@ lazy val core = (project in file("core"))
   /* } Coveralls */
   )
 
-lazy val docDir = file("docs")
-lazy val docs = (project in docDir)
-  .enablePlugins(MicrositesPlugin)
-  .settings(noPublish)
+//lazy val docDir = file("docs")
+//lazy val docs = (project in docDir)
+//  .enablePlugins(MicrositesPlugin)
+//  .settings(noPublish)
+//  .settings(
+//    name := prefixedProjectName("docs")
+//  /* microsites { */
+//  , micrositeName := prefixedProjectName("")
+//  , micrositeAuthor := "Kevin Lee"
+//  , micrositeHomepage := "https://blog.kevinlee.io"
+//  , micrositeDescription := "Just FP"
+//  , micrositeGithubOwner := "Kevin-Lee"
+//  , micrositeGithubRepo := "just-fp"
+//  , micrositeBaseUrl := "/just-fp"
+//  , micrositeDocumentationUrl := s"${micrositeBaseUrl.value}/docs"
+//  , micrositePushSiteWith := GitHub4s
+//  , micrositeGithubToken := sys.env.get("GITHUB_TOKEN")
+////  , micrositeTheme := "pattern"
+//  , micrositeHighlightTheme := "atom-one-light"
+//  , micrositeGitterChannel := false
+//  , micrositeGithubLinks := false
+//  , micrositeShareOnSocial := false
+//  , micrositeHighlightLanguages ++= Seq("shell")
+//
+//  , micrositeConfigYaml := ConfigYml(
+//      yamlPath = Some(docDir / "microsite" / "_config.yml")
+//    )
+//  , micrositeImgDirectory := docDir / "microsite" / "img"
+//  , micrositeCssDirectory := docDir / "microsite" / "css"
+//  , micrositeSassDirectory := docDir / "microsite" / "sass"
+//  , micrositeJsDirectory := docDir / "microsite" / "js"
+//  , micrositeExternalLayoutsDirectory := docDir / "microsite" / "layouts"
+//  , micrositeExternalIncludesDirectory := docDir / "microsite" / "includes"
+//  , micrositeDataDirectory := docDir / "microsite" / "data"
+//  , micrositeStaticDirectory := docDir / "microsite" / "static"
+//  , micrositeExtraMdFilesOutput := docDir / "microsite" / "extra_md"
+//  , micrositePluginsDirectory := docDir / "microsite" / "plugins"
+//
+//  /* } microsites */
+//
+//  )
+//  .dependsOn(core)
+
+lazy val docs = (project in file("generated-docs"))
+  .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
-    name := prefixedProjectName("docs")
-  /* microsites { */
-  , micrositeName := prefixedProjectName("")
-  , micrositeAuthor := "Kevin Lee"
-  , micrositeHomepage := "https://blog.kevinlee.io"
-  , micrositeDescription := "Just FP"
-  , micrositeGithubOwner := "Kevin-Lee"
-  , micrositeGithubRepo := "just-fp"
-  , micrositeBaseUrl := "/just-fp"
-  , micrositeDocumentationUrl := s"${micrositeBaseUrl.value}/docs"
-  , micrositePushSiteWith := GitHub4s
-  , micrositeGithubToken := sys.env.get("GITHUB_TOKEN")
-//  , micrositeTheme := "pattern"
-  , micrositeHighlightTheme := "atom-one-light"
-  , micrositeGitterChannel := false
-  , micrositeGithubLinks := false
-  , micrositeShareOnSocial := false
-  , micrositeHighlightLanguages ++= Seq("shell")
+      name := prefixedProjectName("docs")
 
-  , micrositeConfigYaml := ConfigYml(
-      yamlPath = Some(docDir / "microsite" / "_config.yml")
-    )
-  , micrositeImgDirectory := docDir / "microsite" / "img"
-  , micrositeCssDirectory := docDir / "microsite" / "css"
-  , micrositeSassDirectory := docDir / "microsite" / "sass"
-  , micrositeJsDirectory := docDir / "microsite" / "js"
-  , micrositeExternalLayoutsDirectory := docDir / "microsite" / "layouts"
-  , micrositeExternalIncludesDirectory := docDir / "microsite" / "includes"
-  , micrositeDataDirectory := docDir / "microsite" / "data"
-  , micrositeStaticDirectory := docDir / "microsite" / "static"
-  , micrositeExtraMdFilesOutput := docDir / "microsite" / "extra_md"
-  , micrositePluginsDirectory := docDir / "microsite" / "plugins"
+    , docusaurDir := (ThisBuild / baseDirectory).value / "website"
+    , docusaurBuildDir := docusaurDir.value / "build"
 
-  /* } microsites */
-
+    , gitHubPagesOrgName := GitHubUsername
+    , gitHubPagesRepoName := RepoName
   )
+  .settings(noPublish)
   .dependsOn(core)
+
+lazy val justFp = (project in file("."))
+  .enablePlugins(DevOopsGitReleasePlugin)
+  .settings(
+    name := prefixedProjectName("")
+  , description  := "Just FP Lib"
+  )
+  .settings(noPublish)
+  .aggregate(core, docs)
