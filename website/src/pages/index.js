@@ -18,7 +18,7 @@ const features = [
   },
   {
     title: <>Syntax</>,
-    imageUrl: 'img/lambda-centred-200x200.png',
+    imageUrl: 'img/lambda.svg',
     description: (
       <>
         with helpful syntax like
