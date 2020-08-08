@@ -92,10 +92,10 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           CURRENT_BRANCH_NAME: ${{ github.ref }}
         run: |
-          export CI_BRANCH=$CURRENT_BRANCH_NAME
           echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
           echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          export CI_BRANCH=$CURRENT_BRANCH_NAME
           .github/workflows/sbt-build.sh core 2.13.3
 
       - name: "[PR] Build with Test Coverage"
