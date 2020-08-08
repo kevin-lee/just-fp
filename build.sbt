@@ -4,8 +4,18 @@ import just.semver.SemVer
 import SemVer.{Major, Minor}
 import microsites.ConfigYml
 
-val ProjectScalaVersion: String = "2.13.1"
-val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.11", ProjectScalaVersion)
+val DottyVersion = "0.26.0-RC1"
+val ProjectScalaVersion = DottyVersion
+
+val removeDottyIncompatible: ModuleID => Boolean =
+  m => 
+    m.name == "wartremover" ||
+    m.name == "ammonite" ||
+    m.name == "kind-projector" ||
+    m.name == "mdoc"
+
+//val ProjectScalaVersion: String = "2.13.1"
+val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.12", "2.13.3", ProjectScalaVersion).distinct
 
 val GitHubUsername = "Kevin-Lee"
 val RepoName = "just-fp"
@@ -13,15 +23,17 @@ val ProjectName = RepoName
 
 def prefixedProjectName(name: String) = s"$ProjectName${if (name.isEmpty) "" else s"-$name"}"
 
-lazy val noPublish = Seq(
+lazy val noPublish: SettingsDefinition = Seq(
   publish := {},
   publishLocal := {},
   publishArtifact := false,
+  skip in sbt.Keys.`package` := true,
+  skip in packagedArtifacts := true,
   skip in publish := true
 )
 
 val hedgehogVersionFor2_10 = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
-val hedgehogVersion = "1bdfed24d9a58914fb78c1f4bea19bf8886d163f"
+val hedgehogVersion = "0.4.2"
 val hedgehogRepo: MavenRepository =
   "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
@@ -44,23 +56,55 @@ ThisBuild / scmInfo :=
     , s"git@github.com:$GitHubUsername/$RepoName.git"
     ))
 
+libraryDependencies := (
+  if (isDotty.value)
+    libraryDependencies.value
+      .filterNot(removeDottyIncompatible)
+  else
+    libraryDependencies.value
+)
+libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
+
 lazy val core = (project in file("core"))
   .enablePlugins(DevOopsGitReleasePlugin)
+//  .disablePlugins((if (isDotty.value) Seq(WartRemover) else Seq.empty[AutoPlugin]):_*)
   .settings(
     name := prefixedProjectName("core")
   , description  := "Just FP Lib - Core"
   , crossScalaVersions := CrossScalaVersions
   , unmanagedSourceDirectories in Compile ++= {
       val sharedSourceDir = baseDirectory.value / "src/main"
-      if (scalaVersion.value.startsWith("2.13") || scalaVersion.value.startsWith("2.12"))
-        Seq(sharedSourceDir / "scala-2.12_2.13")
-      else
+      if (scalaVersion.value.startsWith("2.10") || scalaVersion.value.startsWith("2.11"))
         Seq(sharedSourceDir / "scala-2.10_2.11")
+      else
+        Seq(sharedSourceDir / "scala-2.12_2.13")
     }
+  , scalacOptions :=
+      ( if (isDotty.value)
+          Seq(
+            "-source:3.0-migration", "-language:dynamics,existentials,higherKinds,reflectiveCalls,experimental.macros,implicitConversions", "-Ykind-projector"
+          )
+        else
+          Nil
+      )
   , resolvers ++= Seq(
         hedgehogRepo
       )
   , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+  /* Ammonite-REPL { */
+  , libraryDependencies ++=
+      (scalaBinaryVersion.value match {
+        case "2.10" =>
+          Seq.empty[ModuleID]
+        case "2.11" =>
+          Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
+        case "2.12" =>
+          Seq("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
+        case "2.13" =>
+          Seq("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
+        case _ =>
+          Seq.empty[ModuleID]
+      })
   , libraryDependencies :=
       crossVersionProps(List.empty, SemVer.parseUnsafe(scalaVersion.value)) {
         case (Major(2), Minor(10)) =>
@@ -72,39 +116,36 @@ lazy val core = (project in file("core"))
           hedgehogLibs(hedgehogVersion) ++
             libraryDependencies.value
       }
-  /* Ammonite-REPL { */
-  , libraryDependencies ++=
-      (scalaBinaryVersion.value match {
-        case "2.10" =>
-          Seq.empty[ModuleID]
-        case "2.11" =>
-          Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
-        case "2.12" =>
-          Seq.empty[ModuleID] // TODO: add ammonite when it supports Scala 2.12.11
-        case _ =>
-          Seq("com.lihaoyi" % "ammonite" % "2.0.4" % Test cross CrossVersion.full)
-      })
+  , libraryDependencies := (
+      if (isDotty.value) {
+        libraryDependencies.value
+          .filterNot(removeDottyIncompatible)
+      }
+      else
+        (libraryDependencies).value
+    )
+  , libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
   , sourceGenerators in Test +=
       (scalaBinaryVersion.value match {
         case "2.10" =>
           task(Seq.empty[File])
-        case "2.12" =>
-          task(Seq.empty[File]) // TODO: add ammonite when it supports Scala 2.12.11
-        case _ =>
+        case "2.12" | "2.13" =>
           task {
             val file = (sourceManaged in Test).value / "amm.scala"
             IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
             Seq(file)
           }
+        case _ =>
+          task(Seq.empty[File])
       })
   /* } Ammonite-REPL */
 //  , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
 //  , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-  , wartremoverErrors ++= commonWarts((scalaBinaryVersion in update).value)
+//  , wartremoverErrors ++= commonWarts((scalaBinaryVersion in update).value)
   //      , wartremoverErrors ++= Warts.all
-  , Compile / console / wartremoverErrors := List.empty
+//  , Compile / console / wartremoverErrors := List.empty
   , Compile / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover"))
-  , Test / console / wartremoverErrors := List.empty
+//  , Test / console / wartremoverErrors := List.empty
   , Test / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover"))
   , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
   /* Bintray { */
@@ -179,6 +220,15 @@ lazy val docs = (project in file("generated-docs"))
 
     , gitHubPagesOrgName := GitHubUsername
     , gitHubPagesRepoName := RepoName
+
+    , libraryDependencies := (
+        if (isDotty.value)
+          libraryDependencies.value
+            .filterNot(removeDottyIncompatible)
+        else
+          libraryDependencies.value
+      )
+    , libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
   )
   .settings(noPublish)
   .dependsOn(core)
