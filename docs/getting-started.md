@@ -5,7 +5,7 @@ title: 'Getting Started'
 
 ## ![](../img/just-fp-logo-64x64.png) just-fp
 
-[![Build Status](https://github.com/Kevin-Lee/just-fp/workflows/Build%20All/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions?workflow=Build+All)
+[![Build Status](https://github.com/Kevin-Lee/just-fp/workflows/Build-All/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions?workflow=Build-All)
 [![Release Status](https://github.com/Kevin-Lee/just-fp/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions?workflow=Release)
 [![Coverage Status](https://coveralls.io/repos/github/Kevin-Lee/just-fp/badge.svg?branch=main)](https://coveralls.io/github/Kevin-Lee/just-fp?branch=main)
 
