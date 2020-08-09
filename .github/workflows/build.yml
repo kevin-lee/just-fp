@@ -45,23 +45,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
 
-      - name: "[Push] Build All for Scala ${{ matrix.scala.version }}"
+      - name: "[Push] Build All for Scala ${{ matrix.scala.version }} - ${{ github.run_number }}"
         if: github.event_name == 'push'
         env:
           CURRENT_BRANCH_NAME: ${{ github.ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
         run: |
           echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
           echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          echo "RUN_ID=${RUN_ID}"
+          echo "RUN_NUMBER=${RUN_NUMBER}"
+          echo "Push #${PUSH_NUMBER}"
           java -version
           .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
 
-      - name: "[PR] Build All for Scala ${{ matrix.scala.version }}"
+      - name: "[PR] Build All for Scala ${{ matrix.scala.version }} - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
         if: github.event_name == 'pull_request'
         env:
           CURRENT_BRANCH_NAME: ${{ github.base_ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "Rull request to the '${CURRENT_BRANCH_NAME}' branch"
+          echo "RUN_ID=${RUN_ID}"
+          echo "RUN_NUMBER=${RUN_NUMBER}"
+          echo "PR #${PR_NUMBER}"
           java -version
           .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
 
@@ -86,27 +97,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_13-
 
-      - name: "[Push] Build with Test Coverage"
+      - name: "[Push] Build with Test Coverage - ${{ github.run_number }}"
         if: github.event_name == 'push'
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           CURRENT_BRANCH_NAME: ${{ github.ref }}
-          PUSH_NUMBER: ${{ github.event.push.number }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
         run: |
           echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
           echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
-          echo "Push #${PUSH_NUMBER} => ${CURRENT_BRANCH_NAME}"
+          echo "RUN_ID=${RUN_ID}"
+          echo "RUN_NUMBER=${RUN_NUMBER}"
           export CI_BRANCH=$CURRENT_BRANCH_NAME
           .github/workflows/sbt-build.sh core 2.13.3
 
-      - name: "[PR] Build with Test Coverage"
+      - name: "[PR] Build with Test Coverage - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
         if: github.event_name == 'pull_request'
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           CURRENT_BRANCH_NAME: ${{ github.base_ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           export CI_BRANCH="PR-$CURRENT_BRANCH_NAME"
-          echo "PR #${PR_NUMBER} => Rull request to the '${CURRENT_BRANCH_NAME}' branch"
+          echo "RUN_ID=${RUN_ID}"
+          echo "RUN_NUMBER=${RUN_NUMBER}"
+          echo "PR #${PR_NUMBER}"
+          echo "Rull request to the '${CURRENT_BRANCH_NAME}' branch"
           .github/workflows/sbt-build.sh core 2.13.3
