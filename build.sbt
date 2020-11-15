@@ -4,8 +4,8 @@ import just.semver.SemVer
 import SemVer.{Major, Minor}
 import microsites.ConfigYml
 
-val DottyVersion = "0.26.0-RC1"
-val ProjectScalaVersion = DottyVersion
+val DottyVersion = "3.0.0-M1"
+val ProjectScalaVersion = "2.13.3"
 
 val removeDottyIncompatible: ModuleID => Boolean =
   m => 
@@ -14,8 +14,9 @@ val removeDottyIncompatible: ModuleID => Boolean =
     m.name == "kind-projector" ||
     m.name == "mdoc"
 
-//val ProjectScalaVersion: String = "2.13.1"
-val CrossScalaVersions: Seq[String] = Seq("2.10.7", "2.11.12", "2.12.12", "2.13.3", ProjectScalaVersion).distinct
+val CrossScalaVersions: Seq[String] = Seq(
+  "2.10.7", "2.11.12", "2.12.12", "2.13.3", DottyVersion
+).distinct
 
 val GitHubUsername = "Kevin-Lee"
 val RepoName = "just-fp"
@@ -33,7 +34,7 @@ lazy val noPublish: SettingsDefinition = Seq(
 )
 
 val hedgehogVersionFor2_10 = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
-val hedgehogVersion = "0.4.2"
+val hedgehogVersion = "0.5.1"
 val hedgehogRepo: MavenRepository =
   "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
@@ -43,10 +44,13 @@ def hedgehogLibs(hedgehogVersion: String): Seq[ModuleID] = Seq(
   , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
-ThisBuild / scalaVersion     := ProjectScalaVersion
-ThisBuild / version          := ProjectVersion
-ThisBuild / organization     := "io.kevinlee"
-ThisBuild / developers   := List(
+Global / semanticdbEnabled := false
+ThisBuild / semanticdbEnabled := false
+
+ThisBuild / scalaVersion := ProjectScalaVersion
+ThisBuild / version := ProjectVersion
+ThisBuild / organization := "io.kevinlee"
+ThisBuild / developers := List(
     Developer(GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url(s"https://github.com/$GitHubUsername"))
   )
 ThisBuild / homepage := Some(url(s"https://github.com/$GitHubUsername/$RepoName"))
@@ -70,19 +74,45 @@ lazy val core = (project in file("core"))
 //  .disablePlugins((if (isDotty.value) Seq(WartRemover) else Seq.empty[AutoPlugin]):_*)
   .settings(
     name := prefixedProjectName("core")
+  , semanticdbEnabled := false
   , description  := "Just FP Lib - Core"
   , crossScalaVersions := CrossScalaVersions
   , unmanagedSourceDirectories in Compile ++= {
       val sharedSourceDir = baseDirectory.value / "src/main"
       if (scalaVersion.value.startsWith("2.10") || scalaVersion.value.startsWith("2.11"))
         Seq(sharedSourceDir / "scala-2.10_2.11")
+      else if (scalaVersion.value.startsWith("2.12"))
+        Seq(
+          sharedSourceDir / "scala-2.12_2.13",
+          sharedSourceDir / "scala-2.12_3.0",
+        )
+      else if (scalaVersion.value.startsWith("2.13"))
+        Seq(
+          sharedSourceDir / "scala-2.12_2.13",
+          sharedSourceDir / "scala-2.12_3.0",
+          sharedSourceDir / "scala-2.13_3.0",
+        )
+      else if (scalaVersion.value.startsWith("3.0"))
+        Seq(
+          sharedSourceDir / "scala-2.12_3.0",
+          sharedSourceDir / "scala-2.13_3.0"
+        )
       else
-        Seq(sharedSourceDir / "scala-2.12_2.13")
+        Seq.empty
     }
   , scalacOptions :=
       ( if (isDotty.value)
           Seq(
-            "-source:3.0-migration", "-language:dynamics,existentials,higherKinds,reflectiveCalls,experimental.macros,implicitConversions", "-Ykind-projector"
+            "-source:3.0-migration",
+            "-Ykind-projector",
+            "-language:" + List(
+              "dynamics",
+              "existentials",
+              "higherKinds",
+              "reflectiveCalls",
+              "experimental.macros",
+              "implicitConversions"
+            ).mkString(","),
           )
         else
           Nil
@@ -129,7 +159,7 @@ lazy val core = (project in file("core"))
       (scalaBinaryVersion.value match {
         case "2.10" =>
           task(Seq.empty[File])
-        case "2.12" | "2.13" =>
+        case "2.11" | "2.12" | "2.13" =>
           task {
             val file = (sourceManaged in Test).value / "amm.scala"
             IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
@@ -238,6 +268,7 @@ lazy val justFp = (project in file("."))
   .settings(
     name := prefixedProjectName("")
   , description  := "Just FP Lib"
+  , semanticdbEnabled := false
   )
   .settings(noPublish)
-  .aggregate(core, docs)
+  .aggregate(core)
