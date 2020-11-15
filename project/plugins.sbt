@@ -12,6 +12,6 @@ addSbtPlugin("io.kevinlee" % "sbt-devoops" % "1.0.3")
 
 addSbtPlugin("com.47deg" % "sbt-microsites" % "1.1.4")
 
-addSbtPlugin("io.kevinlee" % "sbt-docusaur" % "0.1.3")
+addSbtPlugin("io.kevinlee" % "sbt-docusaur" % "0.3.0")
 
-addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.1")
+addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.6")
