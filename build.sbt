@@ -4,7 +4,7 @@ import just.semver.SemVer
 import SemVer.{Major, Minor}
 import microsites.ConfigYml
 
-val DottyVersion = "3.0.0-M1"
+val DottyVersions = Seq("3.0.0-M1", "3.0.0-M2")
 val ProjectScalaVersion = "2.13.3"
 
 val removeDottyIncompatible: ModuleID => Boolean =
@@ -14,9 +14,9 @@ val removeDottyIncompatible: ModuleID => Boolean =
     m.name == "kind-projector" ||
     m.name == "mdoc"
 
-val CrossScalaVersions: Seq[String] = Seq(
-  "2.10.7", "2.11.12", "2.12.12", "2.13.3", DottyVersion
-).distinct
+val CrossScalaVersions: Seq[String] = (Seq(
+  "2.10.7", "2.11.12", "2.12.12", "2.13.3"
+) ++ DottyVersions).distinct
 
 val GitHubUsername = "Kevin-Lee"
 val RepoName = "just-fp"
