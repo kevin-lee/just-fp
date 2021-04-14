@@ -28,13 +28,13 @@ lazy val noPublish: SettingsDefinition = Seq(
   publish := {},
   publishLocal := {},
   publishArtifact := false,
-  skip in sbt.Keys.`package` := true,
-  skip in packagedArtifacts := true,
-  skip in publish := true
+  sbt.Keys.`package` / skip := true,
+  packagedArtifacts / skip := true,
+  publish / skip := true
 )
 
 val hedgehogVersionFor2_10 = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
-val hedgehogVersion = "0.5.1"
+val hedgehogVersion = "0.6.5"
 val hedgehogRepo: MavenRepository =
   "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
@@ -44,7 +44,6 @@ def hedgehogLibs(hedgehogVersion: String): Seq[ModuleID] = Seq(
   , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
-Global / semanticdbEnabled := false
 ThisBuild / semanticdbEnabled := false
 
 ThisBuild / scalaVersion := ProjectScalaVersion
@@ -77,7 +76,7 @@ lazy val core = (project in file("core"))
   , semanticdbEnabled := false
   , description  := "Just FP Lib - Core"
   , crossScalaVersions := CrossScalaVersions
-  , unmanagedSourceDirectories in Compile ++= {
+  , Compile / unmanagedSourceDirectories ++= {
       val sharedSourceDir = baseDirectory.value / "src/main"
       if (scalaVersion.value.startsWith("2.10") || scalaVersion.value.startsWith("2.11"))
         Seq(sharedSourceDir / "scala-2.10_2.11")
@@ -155,13 +154,13 @@ lazy val core = (project in file("core"))
         (libraryDependencies).value
     )
   , libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
-  , sourceGenerators in Test +=
+  , Test / sourceGenerators +=
       (scalaBinaryVersion.value match {
         case "2.10" =>
           task(Seq.empty[File])
         case "2.11" | "2.12" | "2.13" =>
           task {
-            val file = (sourceManaged in Test).value / "amm.scala"
+            val file = (Test / sourceManaged).value / "amm.scala"
             IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
             Seq(file)
           }
@@ -169,9 +168,9 @@ lazy val core = (project in file("core"))
           task(Seq.empty[File])
       })
   /* } Ammonite-REPL */
-//  , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-//  , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-//  , wartremoverErrors ++= commonWarts((scalaBinaryVersion in update).value)
+//  , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
+//  , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
+//  , wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
   //      , wartremoverErrors ++= Warts.all
 //  , Compile / console / wartremoverErrors := List.empty
   , Compile / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover"))
@@ -184,7 +183,7 @@ lazy val core = (project in file("core"))
   , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
   /* } Bintray */
 
-  , initialCommands in console :=
+  , console / initialCommands :=
       """import just.fp._; import just.fp.syntax._"""
 
   /* Coveralls { */
