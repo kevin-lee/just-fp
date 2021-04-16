@@ -14,36 +14,31 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: 'Scala 2', version: "2.11.12", binary-version: "2.11", java-version: "8" }
-          - { name: 'Scala 2', version: "2.12.12", binary-version: "2.12", java-version: "11" }
-          - { name: 'Scala 2', version: "2.13.3",  binary-version: "2.13", java-version: "11" }
-          - { name: 'Scala 3', version: "3.0.0-M1", binary-version: "3.0.0-M1", java-version: "11" }
-          - { name: 'Scala 3', version: "3.0.0-M2", binary-version: "3.0.0-M2", java-version: "11" }
-          - { name: 'Scala 3', version: "3.0.0-M3", binary-version: "3.0.0-M3", java-version: "11" }
-          - { name: 'Scala 3', version: "3.0.0-RC1", binary-version: "3.0.0-RC1", java-version: "11" }
-          - { name: 'Scala 3', version: "3.0.0-RC2", binary-version: "3.0.0-RC2", java-version: "11" }
+          - { name: 'Scala 2', version: "2.11.12",   binary-version: "2.11",      java-version: "adopt@1.8" , report: "" }
+          - { name: 'Scala 2', version: "2.12.12",   binary-version: "2.12",      java-version: "adopt@1.11", report: "" }
+          - { name: 'Scala 2', version: "2.13.3",    binary-version: "2.13",      java-version: "adopt@1.11", report: "report" }
+          - { name: 'Scala 3', version: "3.0.0-M1",  binary-version: "3.0.0-M1",  java-version: "adopt@1.11", report: "" }
+          - { name: 'Scala 3', version: "3.0.0-M2",  binary-version: "3.0.0-M2",  java-version: "adopt@1.11", report: "" }
+          - { name: 'Scala 3', version: "3.0.0-M3",  binary-version: "3.0.0-M3",  java-version: "adopt@1.11", report: "" }
+          - { name: 'Scala 3', version: "3.0.0-RC1", binary-version: "3.0.0-RC1", java-version: "adopt@1.11", report: "" }
+          - { name: 'Scala 3', version: "3.0.0-RC2", binary-version: "3.0.0-RC2", java-version: "adopt@1.11", report: "" }
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
+      - uses: olafurpg/setup-scala@v10
         with:
           java-version: ${{ matrix.scala.java-version }}
 
-      - name: Cache Coursier
-        uses: actions/cache@v1
+      - name: Cache SBT
+        uses: actions/cache@v2
         with:
-          path: ~/.cache/coursier
-          key: ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          path: |
+            ~/.ivy2/cache
+            ~/.cache/coursier
+            ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
-            ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-
-
-      - name: Cache Ivy
-        uses: actions/cache@v1
-        with:
-          path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
+            ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
 
       - name: "[Push] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
         if: github.event_name == 'push'
@@ -59,72 +54,4 @@ jobs:
           echo "RUN_NUMBER=${RUN_NUMBER}"
           echo "Push #${PUSH_NUMBER}"
           java -version
-          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
-
-      - name: "[PR] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
-        if: github.event_name == 'pull_request'
-        env:
-          CURRENT_BRANCH_NAME: ${{ github.base_ref }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_NUMBER: ${{ github.run_number }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "Rull request to the '${CURRENT_BRANCH_NAME}' branch"
-          echo "RUN_ID=${RUN_ID}"
-          echo "RUN_NUMBER=${RUN_NUMBER}"
-          echo "PR #${PR_NUMBER}"
-          java -version
-          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
-
-  build_with_test_coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Cache Coursier
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/coursier
-          key: ${{ runner.os }}-coursier-scala-2_13-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-coursier-scala-2_13-
-
-      - name: Cache Ivy
-        uses: actions/cache@v1
-        with:
-          path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy-scala-2_13-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-ivy-scala-2_13-
-
-      - name: "[Push] Build with Test Coverage - ${{ github.run_number }}"
-        if: github.event_name == 'push'
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          CURRENT_BRANCH_NAME: ${{ github.ref }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_NUMBER: ${{ github.run_number }}
-        run: |
-          echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
-          export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
-          echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
-          echo "RUN_ID=${RUN_ID}"
-          echo "RUN_NUMBER=${RUN_NUMBER}"
-          export CI_BRANCH=$CURRENT_BRANCH_NAME
-          .github/workflows/sbt-build.sh core 2.13.3
-
-      - name: "[PR] Build with Test Coverage - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
-        if: github.event_name == 'pull_request'
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          CURRENT_BRANCH_NAME: ${{ github.base_ref }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_NUMBER: ${{ github.run_number }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          export CI_BRANCH="PR-$CURRENT_BRANCH_NAME"
-          echo "RUN_ID=${RUN_ID}"
-          echo "RUN_NUMBER=${RUN_NUMBER}"
-          echo "PR #${PR_NUMBER}"
-          echo "Rull request to the '${CURRENT_BRANCH_NAME}' branch"
-          .github/workflows/sbt-build.sh core 2.13.3
+          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }} ${{ matrix.scala.report }}

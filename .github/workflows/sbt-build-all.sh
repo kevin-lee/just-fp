@@ -20,9 +20,20 @@ else
 
   if [[ "$CURRENT_BRANCH_NAME" == "main" || "$CURRENT_BRANCH_NAME" == "release" ]]
   then
-#    sbt -J-Xmx2048m ++${scala_version}! -v clean; coverage; test; coverageReport; coverageAggregate
-#    sbt -J-Xmx2048m ++${scala_version}! -v coveralls
-#    sbt -J-Xmx2048m ++${scala_version}! -v clean; packagedArtifacts
+    if [ "$2" == "report" ]
+    then
+      echo "sbt -J-Xmx2048m ++${scala_version}! -v clean coverage test coverageReport coverageAggregate coveralls"
+      sbt \
+        -J-Xmx2048m \
+        ++${scala_version}! \
+        -v \
+        clean \
+        coverage \
+        test \
+        coverageReport \
+        coverageAggregate \
+        coveralls
+    fi
     sbt \
       -J-Xmx2048m \
       ++${scala_version}! \
@@ -31,8 +42,6 @@ else
       test \
       packagedArtifacts
   else
-#    sbt -J-Xmx2048m ++${scala_version}! -v clean coverage test coverageReport coverageAggregate package
-#    sbt -J-Xmx2048m ++${scala_version}! -v coveralls
     sbt \
       -J-Xmx2048m \
       ++${scala_version}! \

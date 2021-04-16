@@ -2,7 +2,6 @@ import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
-import microsites.ConfigYml
 
 val DottyVersions = Seq("3.0.0-M1", "3.0.0-M2", "3.0.0-M3", "3.0.0-RC1", "3.0.0-RC2")
 val ProjectScalaVersion = "2.13.3"
@@ -23,15 +22,6 @@ val RepoName = "just-fp"
 val ProjectName = RepoName
 
 def prefixedProjectName(name: String) = s"$ProjectName${if (name.isEmpty) "" else s"-$name"}"
-
-lazy val noPublish: SettingsDefinition = Seq(
-  publish := {},
-  publishLocal := {},
-  publishArtifact := false,
-  sbt.Keys.`package` / skip := true,
-  packagedArtifacts / skip := true,
-  publish / skip := true
-)
 
 val hedgehogVersionFor2_10 = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
 val hedgehogVersion = "0.6.5"
@@ -69,7 +59,7 @@ libraryDependencies := (
 libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
 
 lazy val core = (project in file("core"))
-  .enablePlugins(DevOopsGitReleasePlugin)
+  .enablePlugins(DevOopsGitHubReleasePlugin)
 //  .disablePlugins((if (isDotty.value) Seq(WartRemover) else Seq.empty[AutoPlugin]):_*)
   .settings(
     name := prefixedProjectName("core")
@@ -136,7 +126,7 @@ lazy val core = (project in file("core"))
       })
   , libraryDependencies :=
       crossVersionProps(List.empty, SemVer.parseUnsafe(scalaVersion.value)) {
-        case (Major(2), Minor(10)) =>
+        case (Major(2), Minor(10), _) =>
           hedgehogLibs(hedgehogVersionFor2_10) ++
             libraryDependencies.value.filterNot(
               m => m.organization == "org.wartremover" && m.name == "wartremover"
@@ -263,11 +253,11 @@ lazy val docs = (project in file("generated-docs"))
   .dependsOn(core)
 
 lazy val justFp = (project in file("."))
-  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := prefixedProjectName("")
   , description  := "Just FP Lib"
   , semanticdbEnabled := false
   )
   .settings(noPublish)
+  .settings(noDoc)
   .aggregate(core)
