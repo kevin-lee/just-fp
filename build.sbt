@@ -3,56 +3,31 @@ import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
 
-val DottyVersions = Seq("3.0.0-M1", "3.0.0-M2", "3.0.0-M3", "3.0.0-RC1", "3.0.0-RC2")
-val ProjectScalaVersion = "2.13.3"
-
-val removeDottyIncompatible: ModuleID => Boolean =
-  m => 
-    m.name == "wartremover" ||
-    m.name == "ammonite" ||
-    m.name == "kind-projector" ||
-    m.name == "mdoc"
-
-val CrossScalaVersions: Seq[String] = (Seq(
-  "2.10.7", "2.11.12", "2.12.12", "2.13.3"
-) ++ DottyVersions).distinct
-
-val GitHubUsername = "Kevin-Lee"
-val RepoName = "just-fp"
-val ProjectName = RepoName
-
-def prefixedProjectName(name: String) = s"$ProjectName${if (name.isEmpty) "" else s"-$name"}"
-
-val hedgehogVersionFor2_10 = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
-val hedgehogVersion = "0.6.5"
-val hedgehogRepo: MavenRepository =
-  "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
-
-def hedgehogLibs(hedgehogVersion: String): Seq[ModuleID] = Seq(
-    "qa.hedgehog" %% "hedgehog-core" % hedgehogVersion % Test
-  , "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test
-  , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
-  )
-
 ThisBuild / semanticdbEnabled := false
 
-ThisBuild / scalaVersion := ProjectScalaVersion
+ThisBuild / scalaVersion := props.ProjectScalaVersion
 ThisBuild / version := ProjectVersion
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / developers := List(
-    Developer(GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url(s"https://github.com/$GitHubUsername"))
+  Developer(
+    props.GitHubUsername,
+    "Kevin Lee",
+    "kevin.code@kevinlee.io",
+    url(s"https://github.com/${props.GitHubUsername}"),
   )
-ThisBuild / homepage := Some(url(s"https://github.com/$GitHubUsername/$RepoName"))
+)
+ThisBuild / homepage := url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}").some
 ThisBuild / scmInfo :=
-  Some(ScmInfo(
-      url(s"https://github.com/$GitHubUsername/$RepoName")
-    , s"git@github.com:$GitHubUsername/$RepoName.git"
-    ))
+  ScmInfo(
+    url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"),
+    s"git@github.com:${props.GitHubUsername}/${props.RepoName}.git"
+  ).some
 
 libraryDependencies := (
   if (isDotty.value)
-    libraryDependencies.value
-      .filterNot(removeDottyIncompatible)
+    libraryDependencies
+      .value
+      .filterNot(props.removeDottyIncompatible)
   else
     libraryDependencies.value
 )
@@ -60,130 +35,126 @@ libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVers
 
 lazy val core = (project in file("core"))
   .enablePlugins(DevOopsGitHubReleasePlugin)
-//  .disablePlugins((if (isDotty.value) Seq(WartRemover) else Seq.empty[AutoPlugin]):_*)
+//  .disablePlugins((if (isDotty.value) List(WartRemover) else Seq.empty[AutoPlugin]):_*)
   .settings(
-    name := prefixedProjectName("core")
-  , semanticdbEnabled := false
-  , description  := "Just FP Lib - Core"
-  , crossScalaVersions := CrossScalaVersions
-  , Compile / unmanagedSourceDirectories ++= {
+    name := prefixedProjectName("core"),
+    semanticdbEnabled := false,
+    description := "Just FP Lib - Core",
+    crossScalaVersions := props.CrossScalaVersions,
+    Compile / unmanagedSourceDirectories ++= {
       val sharedSourceDir = baseDirectory.value / "src/main"
       if (scalaVersion.value.startsWith("2.10") || scalaVersion.value.startsWith("2.11"))
-        Seq(sharedSourceDir / "scala-2.10_2.11")
+        List(sharedSourceDir / "scala-2.10_2.11")
       else if (scalaVersion.value.startsWith("2.12"))
-        Seq(
+        List(
           sharedSourceDir / "scala-2.12_2.13",
           sharedSourceDir / "scala-2.12_3.0",
         )
       else if (scalaVersion.value.startsWith("2.13"))
-        Seq(
+        List(
           sharedSourceDir / "scala-2.12_2.13",
           sharedSourceDir / "scala-2.12_3.0",
           sharedSourceDir / "scala-2.13_3.0",
         )
       else if (scalaVersion.value.startsWith("3.0"))
-        Seq(
+        List(
           sharedSourceDir / "scala-2.12_3.0",
-          sharedSourceDir / "scala-2.13_3.0"
+          sharedSourceDir / "scala-2.13_3.0",
         )
       else
         Seq.empty
-    }
-  , scalacOptions :=
-      ( if (isDotty.value)
-          Seq(
-            "-source:3.0-migration",
-            "-Ykind-projector",
-            "-language:" + List(
-              "dynamics",
-              "existentials",
-              "higherKinds",
-              "reflectiveCalls",
-              "experimental.macros",
-              "implicitConversions"
-            ).mkString(","),
-          )
-        else
-          Nil
-      )
-  , resolvers ++= Seq(
-        hedgehogRepo
-      )
-  , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
-  /* Ammonite-REPL { */
-  , libraryDependencies ++=
+    },
+    scalacOptions :=
+      (if (isDotty.value)
+         List(
+           "-source:3.0-migration",
+           "-Ykind-projector",
+           "-language:" + List(
+             "dynamics",
+             "existentials",
+             "higherKinds",
+             "reflectiveCalls",
+             "experimental.macros",
+             "implicitConversions",
+           ).mkString(","),
+         )
+       else
+        scalacOptions.value),
+    resolvers ++= List(
+      props.hedgehogRepo
+    ),
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full),
+    /* Ammonite-REPL { */
+    libraryDependencies ++=
       (scalaBinaryVersion.value match {
         case "2.10" =>
           Seq.empty[ModuleID]
         case "2.11" =>
-          Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
+          List("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
         case "2.12" =>
-          Seq("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
+          List("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
         case "2.13" =>
-          Seq("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
-        case _ =>
+          List("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
+        case _      =>
           Seq.empty[ModuleID]
-      })
-  , libraryDependencies :=
+      }),
+    libraryDependencies :=
       crossVersionProps(List.empty, SemVer.parseUnsafe(scalaVersion.value)) {
         case (Major(2), Minor(10), _) =>
-          hedgehogLibs(hedgehogVersionFor2_10) ++
-            libraryDependencies.value.filterNot(
-              m => m.organization == "org.wartremover" && m.name == "wartremover"
-            )
-        case x =>
-          hedgehogLibs(hedgehogVersion) ++
+          libs.hedgehogLibs(props.hedgehogVersionFor2_10) ++
+            libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
+        case x                        =>
+          libs.hedgehogLibs(props.hedgehogVersion) ++
             libraryDependencies.value
-      }
-  , libraryDependencies := (
+      },
+    libraryDependencies := (
       if (isDotty.value) {
-        libraryDependencies.value
-          .filterNot(removeDottyIncompatible)
-      }
-      else
+        libraryDependencies
+          .value
+          .filterNot(props.removeDottyIncompatible)
+      } else
         (libraryDependencies).value
-    )
-  , libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
-  , Test / sourceGenerators +=
+    ),
+    libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value)),
+    Test / sourceGenerators +=
       (scalaBinaryVersion.value match {
-        case "2.10" =>
+        case "2.10"                   =>
           task(Seq.empty[File])
         case "2.11" | "2.12" | "2.13" =>
           task {
             val file = (Test / sourceManaged).value / "amm.scala"
             IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
-            Seq(file)
+            List(file)
           }
-        case _ =>
+        case _                        =>
           task(Seq.empty[File])
-      })
-  /* } Ammonite-REPL */
+      }),
+    /* } Ammonite-REPL */
 //  , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
 //  , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
 //  , wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
-  //      , wartremoverErrors ++= Warts.all
+    //      , wartremoverErrors ++= Warts.all
 //  , Compile / console / wartremoverErrors := List.empty
-  , Compile / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover"))
-//  , Test / console / wartremoverErrors := List.empty
-  , Test / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover"))
-  , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-  /* Bintray { */
-  , bintrayPackageLabels := Seq("Scala", "Functional Programming", "FP")
-  , bintrayVcsUrl := Some(s"""git@github.com:$GitHubUsername/$RepoName.git""")
-  , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
-  /* } Bintray */
+    Compile / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover")),
+//    Test / console / wartremoverErrors := List.empty,
+    Test / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover")),
+    testFrameworks ++= List(TestFramework("hedgehog.sbt.Framework")),
+    /* Bintray { */
+    bintrayPackageLabels := List("Scala", "Functional Programming", "FP"),
+    bintrayVcsUrl := s"""git@github.com:${props.GitHubUsername}/${props.RepoName}.git""".some,
+    licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
+    /* } Bintray */
 
-  , console / initialCommands :=
-      """import just.fp._; import just.fp.syntax._"""
-
-  /* Coveralls { */
-  , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, 10)) =>
-      false
-    case _ =>
-      true
-  })
-  /* } Coveralls */
+    console / initialCommands :=
+      """import just.fp._; import just.fp.syntax._""",
+    /* Coveralls { */
+    coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, 10)) =>
+        false
+      case _             =>
+        true
+    })
+    /* } Coveralls */
   )
 
 //lazy val docDir = file("docs")
@@ -208,7 +179,7 @@ lazy val core = (project in file("core"))
 //  , micrositeGitterChannel := false
 //  , micrositeGithubLinks := false
 //  , micrositeShareOnSocial := false
-//  , micrositeHighlightLanguages ++= Seq("shell")
+//  , micrositeHighlightLanguages ++= List("shell")
 //
 //  , micrositeConfigYaml := ConfigYml(
 //      yamlPath = Some(docDir / "microsite" / "_config.yml")
@@ -232,32 +203,74 @@ lazy val core = (project in file("core"))
 lazy val docs = (project in file("generated-docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
-      name := prefixedProjectName("docs")
-
-    , docusaurDir := (ThisBuild / baseDirectory).value / "website"
-    , docusaurBuildDir := docusaurDir.value / "build"
-
-    , gitHubPagesOrgName := GitHubUsername
-    , gitHubPagesRepoName := RepoName
-
-    , libraryDependencies := (
-        if (isDotty.value)
-          libraryDependencies.value
-            .filterNot(removeDottyIncompatible)
-        else
-          libraryDependencies.value
-      )
-    , libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
+    name := prefixedProjectName("docs"),
+    docusaurDir := (ThisBuild / baseDirectory).value / "website",
+    docusaurBuildDir := docusaurDir.value / "build",
+    gitHubPagesOrgName := props.GitHubUsername,
+    gitHubPagesRepoName := props.RepoName,
+    libraryDependencies := (
+      if (isDotty.value)
+        libraryDependencies
+          .value
+          .filterNot(props.removeDottyIncompatible)
+      else
+        libraryDependencies.value
+    ),
+    libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
   )
   .settings(noPublish)
   .dependsOn(core)
 
 lazy val justFp = (project in file("."))
   .settings(
-    name := prefixedProjectName("")
-  , description  := "Just FP Lib"
-  , semanticdbEnabled := false
+    name := prefixedProjectName(""),
+    description := "Just FP Lib",
+    semanticdbEnabled := false
   )
   .settings(noPublish)
   .settings(noDoc)
   .aggregate(core)
+
+lazy val props =
+  new {
+
+    val DottyVersions       = List("3.0.0-M1", "3.0.0-M2", "3.0.0-M3", "3.0.0-RC1", "3.0.0-RC2")
+    val ProjectScalaVersion = "2.13.3"
+
+    val removeDottyIncompatible: ModuleID => Boolean =
+      m =>
+        m.name == "wartremover" ||
+          m.name == "ammonite" ||
+          m.name == "kind-projector" ||
+          m.name == "mdoc"
+
+    val CrossScalaVersions: Seq[String] =
+      (List(
+        "2.10.7",
+        "2.11.12",
+        "2.12.12",
+        "2.13.3"
+      ) ++ DottyVersions).distinct
+
+    val GitHubUsername = "Kevin-Lee"
+    val RepoName       = "just-fp"
+    val ProjectName    = RepoName
+
+    val hedgehogVersionFor2_10        = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
+    val hedgehogVersion               = "0.6.5"
+    val hedgehogRepo: MavenRepository = "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
+  }
+
+lazy val libs =
+  new {
+    def hedgehogLibs(hedgehogVersion: String): Seq[ModuleID] = List(
+      "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion % Test,
+    )
+  }
+
+def prefixedProjectName(name: String) = s"${props.ProjectName}${if (name.isEmpty)
+  ""
+else
+  s"-$name"}"
