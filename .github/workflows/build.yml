@@ -40,6 +40,7 @@ jobs:
       - name: "[Push] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
         if: github.event_name == 'push'
         env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           CURRENT_BRANCH_NAME: ${{ github.ref }}
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
@@ -47,6 +48,8 @@ jobs:
           echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
           echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          export CI_BRANCH=$CURRENT_BRANCH_NAME
+          echo "CI_BRANCH: $CI_BRANCH"
           echo "RUN_ID=${RUN_ID}"
           echo "RUN_NUMBER=${RUN_NUMBER}"
           echo "Push #${PUSH_NUMBER}"

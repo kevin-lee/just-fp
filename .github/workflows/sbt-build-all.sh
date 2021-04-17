@@ -9,6 +9,7 @@ if [ -z "$1" ]
     exit 1
 else
   : ${CURRENT_BRANCH_NAME:?"CURRENT_BRANCH_NAME is missing."}
+  : ${CI_BRANCH:?"CI_BRANCH is missing."}
 
   scala_version=$1
   echo "============================================"
@@ -18,23 +19,23 @@ else
   export SOURCE_DATE_EPOCH=$(date +%s)
   echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
 
+  if [ "$2" == "report" ]
+  then
+    echo "sbt -J-Xmx2048m ++${scala_version}! -v clean coverage test coverageReport coverageAggregate coveralls"
+    sbt \
+      -J-Xmx2048m \
+      ++${scala_version}! \
+      -v \
+      clean \
+      coverage \
+      test \
+      scalafix \
+      coverageReport \
+      coverageAggregate \
+      coveralls
+  fi
   if [[ "$CURRENT_BRANCH_NAME" == "main" || "$CURRENT_BRANCH_NAME" == "release" ]]
   then
-    if [ "$2" == "report" ]
-    then
-      echo "sbt -J-Xmx2048m ++${scala_version}! -v clean coverage test coverageReport coverageAggregate coveralls"
-      sbt \
-        -J-Xmx2048m \
-        ++${scala_version}! \
-        -v \
-        clean \
-        coverage \
-        test \
-        scalafix \
-        coverageReport \
-        coverageAggregate \
-        coveralls
-    fi
     sbt \
       -J-Xmx2048m \
       ++${scala_version}! \
@@ -48,9 +49,7 @@ else
       ++${scala_version}! \
       -v \
       clean \
-      test \
-      scalafix \
-      package
+      packagedArtifacts
   fi
 
 
