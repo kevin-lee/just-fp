@@ -30,6 +30,7 @@ else
         clean \
         coverage \
         test \
+        scalafix \
         coverageReport \
         coverageAggregate \
         coveralls
@@ -48,6 +49,7 @@ else
       -v \
       clean \
       test \
+      scalafix \
       package
   fi
 

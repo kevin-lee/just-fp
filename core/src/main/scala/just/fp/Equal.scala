@@ -22,7 +22,7 @@ trait Equal[F] {
      * x == y = y == x
      */
     @SuppressWarnings(Array("org.wartremover.warts.Equals"))
-    def symmetry(x: F, y: F): Boolean = equal(x, y) == equal(y, x)
+    def symmetry(x: F, y: F): Boolean = equal(x, y) == equal(y, x)  //scalafix:ok
 
     /* Transitivity
      * if x == y && y == z = True, then x == z = True
@@ -42,7 +42,7 @@ trait Equal[F] {
      */
     @SuppressWarnings(Array("org.wartremover.warts.Equals"))
     def negation(x: F, y: F): Boolean =
-      notEqual(x, y) == !equal(x, y)
+      notEqual(x, y) == !equal(x, y)  //scalafix:ok
   }
 }
 
@@ -70,22 +70,23 @@ object Equal
 trait NatualEqual {
   def equalA[A]: Equal[A] = new Equal[A] {
     @SuppressWarnings(Array("org.wartremover.warts.Equals"))
-    def equal(x: A, y: A): Boolean = x == y
+    def equal(x: A, y: A): Boolean = x == y  //scalafix:ok
   }
 }
+object NatualEqual extends NatualEqual
 
 trait OptionEqualInstance {
-  implicit def optionEqual[A]: Equal[Option[A]] = Equal.equalA[Option[A]]
+  implicit def optionEqual[A]: Equal[Option[A]] = NatualEqual.equalA[Option[A]]
 }
 
 trait EitherEqualInstance {
-  implicit def eitherEqual[A, B]: Equal[Either[A, B]] = Equal.equalA[Either[A, B]]
+  implicit def eitherEqual[A, B]: Equal[Either[A, B]] = NatualEqual.equalA[Either[A, B]]
 }
 
 trait ListEqualInstance {
-  implicit def listEqual[A]: Equal[List[A]]= Equal.equalA[List[A]]
+  implicit def listEqual[A]: Equal[List[A]]= NatualEqual.equalA[List[A]]
 }
 
 trait VectorEqualInstance {
-  implicit def vectorEqual[A]: Equal[Vector[A]]= Equal.equalA[Vector[A]]
+  implicit def vectorEqual[A]: Equal[Vector[A]]= NatualEqual.equalA[Vector[A]]
 }

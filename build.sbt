@@ -83,18 +83,18 @@ lazy val core = (project in file("core"))
     resolvers ++= List(
       props.hedgehogRepo
     ),
-    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full),
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full),
     /* Ammonite-REPL { */
     libraryDependencies ++=
       (scalaBinaryVersion.value match {
         case "2.10" =>
           Seq.empty[ModuleID]
         case "2.11" =>
-          List("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
+          List("com.lihaoyi" % "ammonite" % "1.6.7-2-c28002d" % Test cross CrossVersion.full)
         case "2.12" =>
-          List("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
+          List("com.lihaoyi" % "ammonite" % "2.3.8-58-aa8b2ab1" % Test cross CrossVersion.full)
         case "2.13" =>
-          List("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
+          List("com.lihaoyi" % "ammonite" % "2.3.8-65-0f0d597f" % Test cross CrossVersion.full)
         case _      =>
           Seq.empty[ModuleID]
       }),

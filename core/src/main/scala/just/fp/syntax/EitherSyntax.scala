@@ -150,10 +150,10 @@ trait EitherFunctions {
   def right[A, B](b: B): Either[A, B] = Right(b)
 
   @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
-  def castR[A, B, C](l: Left[A, B]): Either[A, C] = l.asInstanceOf[Either[A, C]]
+  def castR[A, B, C](l: Left[A, B]): Either[A, C] = l.asInstanceOf[Either[A, C]]  //scalafix:ok
 
   @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
-  def castL[A, B, C](r: Right[A, B]): Either[C, B] = r.asInstanceOf[Either[C, B]]
+  def castL[A, B, C](r: Right[A, B]): Either[C, B] = r.asInstanceOf[Either[C, B]]  //scalafix:ok
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.ImplicitConversion"))
