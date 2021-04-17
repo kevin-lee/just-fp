@@ -22,6 +22,7 @@ ThisBuild / scmInfo :=
     url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"),
     s"git@github.com:${props.GitHubUsername}/${props.RepoName}.git"
   ).some
+ThisBuild / licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
 libraryDependencies := (
   if (isDotty.value)
@@ -139,9 +140,7 @@ lazy val core = (project in file("core"))
     Test / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover")),
     testFrameworks ++= List(TestFramework("hedgehog.sbt.Framework")),
     /* Bintray { */
-    bintrayPackageLabels := List("Scala", "Functional Programming", "FP"),
-    bintrayVcsUrl := s"""git@github.com:${props.GitHubUsername}/${props.RepoName}.git""".some,
-    licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
+    licenses := List("MIT" -> url("http://opensource.org/licenses/MIT")),
     /* } Bintray */
 
     console / initialCommands :=
