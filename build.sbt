@@ -234,7 +234,7 @@ lazy val justFp = (project in file("."))
 lazy val props =
   new {
 
-    val DottyVersions       = List("3.0.0-M1", "3.0.0-M2", "3.0.0-M3", "3.0.0-RC1", "3.0.0-RC2")
+    val DottyVersions       = List("3.0.0-RC1", "3.0.0-RC2")
     val ProjectScalaVersion = "2.13.3"
 
     val removeDottyIncompatible: ModuleID => Boolean =
