@@ -34,7 +34,6 @@ libraryDependencies := (
 libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
 
 lazy val core = (project in file("core"))
-  .enablePlugins(DevOopsGitHubReleasePlugin)
 //  .disablePlugins((if (isDotty.value) List(WartRemover) else Seq.empty[AutoPlugin]):_*)
   .settings(
     name := prefixedProjectName("core"),
@@ -222,10 +221,14 @@ lazy val docs = (project in file("generated-docs"))
   .dependsOn(core)
 
 lazy val justFp = (project in file("."))
+  .enablePlugins(DevOopsGitHubReleasePlugin)
   .settings(
     name := prefixedProjectName(""),
     description := "Just FP Lib",
-    semanticdbEnabled := false
+    semanticdbEnabled := false,
+    devOopsPackagedArtifacts := List(
+      s"*/target/scala-*/${name.value}*.jar",
+    ),
   )
   .settings(noPublish)
   .settings(noDoc)
