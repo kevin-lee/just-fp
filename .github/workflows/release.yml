@@ -82,7 +82,9 @@ jobs:
           export SOURCE_DATE_EPOCH=$(date +%s)
           echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
           echo 'sbt -J-Xmx2048m -v clean +test +packagedArtifacts ci-release devOopsGitHubReleaseUploadArtifacts'
-          sbt -J-Xmx2048m \
+          sbt \
+            -J-XX:MaxMetaspaceSize=1024m \
+            -J-Xmx2048m \
             -v \
             clean \
             +test \
