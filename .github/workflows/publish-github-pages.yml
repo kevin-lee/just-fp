@@ -1,9 +1,7 @@
 name: Publish GitHub Pages
 
 on:
-  push:
-    branches:
-      - publish-docs
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,7 +11,7 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { version: "2.13.3", binary-version: "2.13", java-version: "11" }
+          - { version: "2.13.5", binary-version: "2.13", java-version: "11" }
 
     steps:
       - uses: actions/checkout@v2
@@ -25,24 +23,19 @@ jobs:
           node-version: '14.4.0'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Cache Coursier
-        uses: actions/cache@v1
+      - name: Cache SBT
+        uses: actions/cache@v2
         with:
-          path: ~/.cache/coursier
-          key: ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          path: |
+            ~/.ivy2/cache
+            ~/.cache/coursier
+            ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
-            ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-
-
-      - name: Cache Ivy
-        uses: actions/cache@v1
-        with:
-          path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
+            ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
 
       - name: Cache npm
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -61,6 +54,7 @@ jobs:
             clean \
             docs/mdoc \
             docs/docusaurGenerateAlgoliaConfigFile \
+            docs/docusaurGenerateGoogleAnalyticsConfigFile \
             docs/docusaurInstall \
             docs/docusaurCleanBuild \
             docs/docusaurBuild \

@@ -202,6 +202,16 @@ lazy val docs = (project in file("generated-docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
     name := prefixedProjectName("docs"),
+    mdocVariables := Map(
+      "VERSION" -> (ThisBuild / version).value,
+      "SUPPORTED_SCALA_VERSIONS" -> {
+        val versions = props.CrossScalaVersions.map(v => s"`$v`")
+        if (versions.length > 1)
+          s"${versions.init.mkString(", ")} and ${versions.last}"
+        else
+          versions.mkString
+      },
+    ),
     docusaurDir := (ThisBuild / baseDirectory).value / "website",
     docusaurBuildDir := docusaurDir.value / "build",
     gitHubPagesOrgName := props.GitHubUsername,
