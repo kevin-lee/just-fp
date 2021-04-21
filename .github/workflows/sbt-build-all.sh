@@ -16,24 +16,24 @@ else
   echo "Build projects"
   echo "--------------------------------------------"
   echo ""
+
+  test_task="test scalafix"
+  if [ "$2" == "report" ]
+  then
+    test_task="coverage test scalafix coverageReport coverageAggregate coveralls"
+  fi
+
+  echo "sbt -J-Xmx2048m ++${scala_version}! -v clean ${test_task}"
+  sbt \
+    -J-Xmx2048m \
+    ++${scala_version}! \
+    -v \
+    clean \
+    ${test_task}
+
   export SOURCE_DATE_EPOCH=$(date +%s)
   echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
 
-  if [ "$2" == "report" ]
-  then
-    echo "sbt -J-Xmx2048m ++${scala_version}! -v clean coverage test coverageReport coverageAggregate coveralls"
-    sbt \
-      -J-Xmx2048m \
-      ++${scala_version}! \
-      -v \
-      clean \
-      coverage \
-      test \
-      scalafix \
-      coverageReport \
-      coverageAggregate \
-      coveralls
-  fi
   if [[ "$CURRENT_BRANCH_NAME" == "main" || "$CURRENT_BRANCH_NAME" == "release" ]]
   then
     sbt \
@@ -41,7 +41,6 @@ else
       ++${scala_version}! \
       -v \
       clean \
-      test \
       packagedArtifacts
   else
     sbt \
