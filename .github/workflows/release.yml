@@ -14,7 +14,7 @@ env:
 
 jobs:
   gh-release:
-    needs: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v')
 
     runs-on: ubuntu-latest
     steps:
@@ -98,7 +98,7 @@ jobs:
 
 
   publish-snapshot:
-    needs: startsWith(github.ref, 'refs/heads/')
+    if: startsWith(github.ref, 'refs/heads/')
 
     runs-on: ubuntu-latest
 
