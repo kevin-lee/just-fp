@@ -17,10 +17,15 @@ else
   echo "--------------------------------------------"
   echo ""
 
-  test_task="test scalafix"
+  test_task="test"
+  if [[ $scala_version == 2* ]] ;
+  then
+    test_task="${test_task} scalafix"
+  fi
+
   if [ "$2" == "report" ]
   then
-    test_task="coverage test scalafix coverageReport coverageAggregate coveralls"
+    test_task="coverage ${test_task} coverageReport coverageAggregate coveralls"
   fi
 
   echo "sbt -J-Xmx2048m ++${scala_version}! -v clean ${test_task}"
