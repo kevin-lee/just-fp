@@ -8,8 +8,6 @@ import wartremover.WartRemover.autoImport.{Wart, Warts}
   */
 object ProjectInfo {
 
-  val ProjectVersion: String = "1.4.0"
-
   def commonWarts(scalaBinaryVersion: String): Seq[wartremover.Wart] = scalaBinaryVersion match {
     case "2.10" =>
       Seq.empty
