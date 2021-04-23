@@ -6,7 +6,6 @@ import SemVer.{Major, Minor}
 ThisBuild / semanticdbEnabled := false
 
 ThisBuild / scalaVersion := props.ProjectScalaVersion
-ThisBuild / version := ProjectVersion
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / developers := List(
   Developer(

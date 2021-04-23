@@ -1,4 +1,4 @@
-name: Publish GitHub Pages
+name: "[M] Doc site - Publish"
 
 on:
   workflow_dispatch:
