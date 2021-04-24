@@ -154,49 +154,6 @@ lazy val core = (project in file("core"))
     /* } Coveralls */
   )
 
-//lazy val docDir = file("docs")
-//lazy val docs = (project in docDir)
-//  .enablePlugins(MicrositesPlugin)
-//  .settings(noPublish)
-//  .settings(
-//    name := prefixedProjectName("docs")
-//  /* microsites { */
-//  , micrositeName := prefixedProjectName("")
-//  , micrositeAuthor := "Kevin Lee"
-//  , micrositeHomepage := "https://blog.kevinlee.io"
-//  , micrositeDescription := "Just FP"
-//  , micrositeGithubOwner := "Kevin-Lee"
-//  , micrositeGithubRepo := "just-fp"
-//  , micrositeBaseUrl := "/just-fp"
-//  , micrositeDocumentationUrl := s"${micrositeBaseUrl.value}/docs"
-//  , micrositePushSiteWith := GitHub4s
-//  , micrositeGithubToken := sys.env.get("GITHUB_TOKEN")
-////  , micrositeTheme := "pattern"
-//  , micrositeHighlightTheme := "atom-one-light"
-//  , micrositeGitterChannel := false
-//  , micrositeGithubLinks := false
-//  , micrositeShareOnSocial := false
-//  , micrositeHighlightLanguages ++= List("shell")
-//
-//  , micrositeConfigYaml := ConfigYml(
-//      yamlPath = Some(docDir / "microsite" / "_config.yml")
-//    )
-//  , micrositeImgDirectory := docDir / "microsite" / "img"
-//  , micrositeCssDirectory := docDir / "microsite" / "css"
-//  , micrositeSassDirectory := docDir / "microsite" / "sass"
-//  , micrositeJsDirectory := docDir / "microsite" / "js"
-//  , micrositeExternalLayoutsDirectory := docDir / "microsite" / "layouts"
-//  , micrositeExternalIncludesDirectory := docDir / "microsite" / "includes"
-//  , micrositeDataDirectory := docDir / "microsite" / "data"
-//  , micrositeStaticDirectory := docDir / "microsite" / "static"
-//  , micrositeExtraMdFilesOutput := docDir / "microsite" / "extra_md"
-//  , micrositePluginsDirectory := docDir / "microsite" / "plugins"
-//
-//  /* } microsites */
-//
-//  )
-//  .dependsOn(core)
-
 lazy val docs = (project in file("generated-docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
