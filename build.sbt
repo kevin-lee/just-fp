@@ -75,10 +75,7 @@ lazy val core = (project in file("core"))
            ).mkString(","),
          )
        else
-        scalacOptions.value),
-    resolvers ++= List(
-      props.hedgehogRepo
-    ),
+         scalacOptions.value),
     addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full),
     /* Ammonite-REPL { */
     libraryDependencies ++=
@@ -96,14 +93,16 @@ lazy val core = (project in file("core"))
       }),
     libraryDependencies :=
       (SemVer.parseUnsafe(scalaVersion.value) match {
-        case SemVer(Major(2), Minor(10), _, _, _) =>
-          libs.hedgehogLibs(props.hedgehogVersionFor2_10) ++
-            libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
-        case SemVer(Major(3), Minor(0), Patch(0),
-             Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))), _) =>
+        case SemVer(
+              Major(3),
+              Minor(0),
+              Patch(0),
+              Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))),
+              _
+            ) =>
           libs.hedgehogLibs(props.hedgehogVersion) ++
             libraryDependencies.value
-        case x                        =>
+        case _                                    =>
           libs.hedgehogLibs(props.hedgehogVersionLatest) ++
             libraryDependencies.value
       }),
@@ -159,7 +158,7 @@ lazy val docs = (project in file("generated-docs"))
   .settings(
     name := prefixedProjectName("docs"),
     mdocVariables := Map(
-      "VERSION" -> (ThisBuild / version).value,
+      "VERSION"                  -> (ThisBuild / version).value,
       "SUPPORTED_SCALA_VERSIONS" -> {
         val versions = props.CrossScalaVersions.map(v => s"`$v`")
         if (versions.length > 1)
@@ -213,7 +212,6 @@ lazy val props =
 
     val CrossScalaVersions: Seq[String] =
       (List(
-        "2.10.7",
         "2.11.12",
         "2.12.12",
         "2.13.3"
@@ -223,10 +221,8 @@ lazy val props =
     val RepoName       = "just-fp"
     val ProjectName    = RepoName
 
-    val hedgehogVersionFor2_10        = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
-    val hedgehogVersion               = "0.6.5"
-    val hedgehogVersionLatest         = "0.6.7"
-    val hedgehogRepo: MavenRepository = "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
+    val hedgehogVersion        = "0.6.5"
+    val hedgehogVersionLatest  = "0.6.7"
   }
 
 lazy val libs =
