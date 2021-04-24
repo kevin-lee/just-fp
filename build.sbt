@@ -6,7 +6,6 @@ ThisBuild / semanticdbEnabled := false
 
 ThisBuild / scalaVersion := props.ProjectScalaVersion
 ThisBuild / organization := "io.kevinlee"
-ThisBuild / version := "1.5.0"
 ThisBuild / developers := List(
   Developer(
     props.GitHubUsername,
