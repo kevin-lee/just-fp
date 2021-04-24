@@ -1,12 +1,12 @@
-import ProjectInfo._
-import kevinlee.sbt.SbtCommon.crossVersionProps
-import just.semver.SemVer
-import SemVer.{Major, Minor}
+import just.semver.{Anh, Dsv, SemVer}
+import SemVer.{Major, Minor, Patch}
+import just.semver.AdditionalInfo.PreRelease
 
 ThisBuild / semanticdbEnabled := false
 
 ThisBuild / scalaVersion := props.ProjectScalaVersion
 ThisBuild / organization := "io.kevinlee"
+ThisBuild / version := "1.5.0"
 ThisBuild / developers := List(
   Developer(
     props.GitHubUsername,
@@ -24,17 +24,15 @@ ThisBuild / scmInfo :=
 ThisBuild / licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
 libraryDependencies := (
-  if (isDotty.value)
+  if (isScala3(scalaVersion.value))
     libraryDependencies
       .value
       .filterNot(props.removeDottyIncompatible)
   else
     libraryDependencies.value
 )
-libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
 
 lazy val core = (project in file("core"))
-//  .disablePlugins((if (isDotty.value) List(WartRemover) else Seq.empty[AutoPlugin]):_*)
   .settings(
     name := prefixedProjectName("core"),
     semanticdbEnabled := false,
@@ -55,7 +53,7 @@ lazy val core = (project in file("core"))
           sharedSourceDir / "scala-2.12_3.0",
           sharedSourceDir / "scala-2.13_3.0",
         )
-      else if (scalaVersion.value.startsWith("3.0"))
+      else if (isScala3(scalaVersion.value))
         List(
           sharedSourceDir / "scala-2.12_3.0",
           sharedSourceDir / "scala-2.13_3.0",
@@ -64,7 +62,7 @@ lazy val core = (project in file("core"))
         Seq.empty
     },
     scalacOptions :=
-      (if (isDotty.value)
+      (if (isScala3(scalaVersion.value))
          List(
            "-source:3.0-migration",
            "-Ykind-projector",
@@ -98,23 +96,26 @@ lazy val core = (project in file("core"))
           Seq.empty[ModuleID]
       }),
     libraryDependencies :=
-      crossVersionProps(List.empty, SemVer.parseUnsafe(scalaVersion.value)) {
-        case (Major(2), Minor(10), _) =>
+      (SemVer.parseUnsafe(scalaVersion.value) match {
+        case SemVer(Major(2), Minor(10), _, _, _) =>
           libs.hedgehogLibs(props.hedgehogVersionFor2_10) ++
             libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
-        case x                        =>
+        case SemVer(Major(3), Minor(0), Patch(0),
+             Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))), _) =>
           libs.hedgehogLibs(props.hedgehogVersion) ++
             libraryDependencies.value
-      },
+        case x                        =>
+          libs.hedgehogLibs(props.hedgehogVersionLatest) ++
+            libraryDependencies.value
+      }),
     libraryDependencies := (
-      if (isDotty.value) {
+      if (isScala3(scalaVersion.value)) {
         libraryDependencies
           .value
           .filterNot(props.removeDottyIncompatible)
       } else
         (libraryDependencies).value
     ),
-    libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value)),
     Test / sourceGenerators +=
       (scalaBinaryVersion.value match {
         case "2.10"                   =>
@@ -216,14 +217,13 @@ lazy val docs = (project in file("generated-docs"))
     gitHubPagesOrgName := props.GitHubUsername,
     gitHubPagesRepoName := props.RepoName,
     libraryDependencies := (
-      if (isDotty.value)
+      if (isScala3(scalaVersion.value))
         libraryDependencies
           .value
           .filterNot(props.removeDottyIncompatible)
       else
         libraryDependencies.value
     ),
-    libraryDependencies := libraryDependencies.value.map(_.withDottyCompat(scalaVersion.value))
   )
   .settings(noPublish)
   .dependsOn(core)
@@ -269,6 +269,7 @@ lazy val props =
 
     val hedgehogVersionFor2_10        = "7bd29241fababd9a3e954fd38083ed280fc9e4e8"
     val hedgehogVersion               = "0.6.5"
+    val hedgehogVersionLatest         = "0.6.7"
     val hedgehogRepo: MavenRepository = "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
   }
 
@@ -285,3 +286,5 @@ def prefixedProjectName(name: String) = s"${props.ProjectName}${if (name.isEmpty
   ""
 else
   s"-$name"}"
+
+def isScala3(scalaVersion: String): Boolean = scalaVersion.startsWith("3.")
