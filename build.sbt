@@ -1,7 +1,3 @@
-import just.semver.{Anh, Dsv, SemVer}
-import SemVer.{Major, Minor, Patch}
-import just.semver.AdditionalInfo.PreRelease
-
 ThisBuild / semanticdbEnabled := false
 
 ThisBuild / scalaVersion := props.ProjectScalaVersion
@@ -144,9 +140,16 @@ lazy val docs = (project in file("generated-docs"))
   .settings(
     name := prefixedProjectName("docs"),
     mdocVariables := Map(
-      "VERSION"                  -> (ThisBuild / version).value,
+      "VERSION" -> {
+        import sys.process._
+        "git fetch --tags".!
+        val tag = "git rev-list --tags --max-count=1".!!.trim
+        s"git describe --tags $tag".!!.trim.stripPrefix("v")
+      },
       "SUPPORTED_SCALA_VERSIONS" -> {
-        val versions = props.CrossScalaVersions.map(v => s"`$v`")
+        val versions = props.CrossScalaVersions
+          .map(CrossVersion.binaryScalaVersion)
+          .map(binVer => s"`$binVer`")
         if (versions.length > 1)
           s"${versions.init.mkString(", ")} and ${versions.last}"
         else
