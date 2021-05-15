@@ -40,7 +40,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
 
-      - name: "[Push] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
+      - name: "[Push] Build All for ${{ matrix.scala.name }}: ${{ matrix.scala.version }} - ${{ github.run_number }}"
         if: github.event_name == 'push'
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
