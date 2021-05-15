@@ -91,21 +91,7 @@ lazy val core = (project in file("core"))
         case _      =>
           Seq.empty[ModuleID]
       }),
-    libraryDependencies :=
-      (SemVer.parseUnsafe(scalaVersion.value) match {
-        case SemVer(
-              Major(3),
-              Minor(0),
-              Patch(0),
-              Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))),
-              _
-            ) =>
-          libs.hedgehogLibs(props.hedgehogVersion) ++
-            libraryDependencies.value
-        case _                                    =>
-          libs.hedgehogLibs(props.hedgehogVersionLatest) ++
-            libraryDependencies.value
-      }),
+    libraryDependencies ++= libs.hedgehogLibs,
     libraryDependencies := (
       if (isScala3(scalaVersion.value)) {
         libraryDependencies
@@ -200,7 +186,7 @@ lazy val justFp = (project in file("."))
 lazy val props =
   new {
 
-    val DottyVersions       = List("3.0.0-RC1", "3.0.0-RC2", "3.0.0-RC3")
+    val DottyVersions       = List("3.0.0")
     val ProjectScalaVersion = "2.13.3"
 
     val removeDottyIncompatible: ModuleID => Boolean =
@@ -221,16 +207,15 @@ lazy val props =
     val RepoName       = "just-fp"
     val ProjectName    = RepoName
 
-    val hedgehogVersion        = "0.6.5"
-    val hedgehogVersionLatest  = "0.6.7"
+    val hedgehogVersion        = "0.7.0"
   }
 
 lazy val libs =
   new {
-    def hedgehogLibs(hedgehogVersion: String): Seq[ModuleID] = List(
-      "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion % Test,
-      "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test,
-      "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion % Test,
+    lazy val hedgehogLibs: List[ModuleID] = List(
+      "qa.hedgehog" %% "hedgehog-core"   % props.hedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-runner" % props.hedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-sbt"    % props.hedgehogVersion % Test,
     )
   }
 
