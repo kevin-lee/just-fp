@@ -2,8 +2,6 @@ package just.fp.syntax
 
 import just.fp.Writer
 
-import scala.language.implicitConversions
-
 /**
   * @author Kevin Lee
   * @since 2019-10-02

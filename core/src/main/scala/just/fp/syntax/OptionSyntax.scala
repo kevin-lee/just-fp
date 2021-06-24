@@ -1,7 +1,5 @@
 package just.fp.syntax
 
-import scala.language.implicitConversions
-
 /**
   * @author Kevin Lee
   * @since 2019-09-21
