@@ -1,6 +1,5 @@
 package just.fp.syntax
 
-import scala.language.implicitConversions
 import scala.util.{Either, Right}
 
 /**
