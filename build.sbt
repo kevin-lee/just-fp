@@ -210,7 +210,7 @@ lazy val props =
     val RepoName       = "just-fp"
     val ProjectName    = RepoName
 
-    val hedgehogVersion        = "0.7.0"
+    val hedgehogVersion        = "0.8.0"
   }
 
 lazy val libs =
