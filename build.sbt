@@ -18,6 +18,8 @@ ThisBuild / scmInfo :=
   ).some
 ThisBuild / licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
+ThisBuild / resolvers += "sonatype-snapshots" at s"https://${props.SonatypeCredentialHost}/content/repositories/snapshots"
+
 libraryDependencies := (
   if (isScala3(scalaVersion.value))
     libraryDependencies
@@ -182,6 +184,7 @@ lazy val justFp = (project in file("."))
       s"*/target/scala-*/${name.value}*.jar",
     ),
   )
+  .settings(mavenCentralPublishSettings)
   .settings(noPublish)
   .settings(noDoc)
   .aggregate(core)
@@ -210,6 +213,9 @@ lazy val props =
     val RepoName       = "just-fp"
     val ProjectName    = RepoName
 
+    val SonatypeCredentialHost = "s01.oss.sonatype.org"
+    val SonatypeRepository = s"https://$SonatypeCredentialHost/service/local"
+
     val hedgehogVersion        = "0.8.0"
   }
 
@@ -221,6 +227,13 @@ lazy val libs =
       "qa.hedgehog" %% "hedgehog-sbt"    % props.hedgehogVersion % Test,
     )
   }
+
+lazy val mavenCentralPublishSettings: SettingsDefinition = List(
+  /* Publish to Maven Central { */
+  sonatypeCredentialHost := props.SonatypeCredentialHost,
+  sonatypeRepository     := props.SonatypeRepository,
+  /* } Publish to Maven Central */
+)
 
 def prefixedProjectName(name: String) = s"${props.ProjectName}${if (name.isEmpty)
   ""
