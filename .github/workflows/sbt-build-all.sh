@@ -5,7 +5,7 @@ set -x
 if [ -z "$1" ]
   then
     echo "Missing parameters. Please enter the [Scala version]."
-    echo "sbt-build.sh 2.13.3"
+    echo "sbt-build.sh 2.13.10"
     exit 1
 else
   : ${CURRENT_BRANCH_NAME:?"CURRENT_BRANCH_NAME is missing."}
@@ -18,14 +18,14 @@ else
   echo ""
 
   test_task="test"
-  if [[ $scala_version == 2* ]] ;
+  if [[ $scala_version == 2.12* || $scala_version == 2.13* ]] ;
   then
     test_task="${test_task} scalafix"
   fi
 
   if [ "$2" == "report" ]
   then
-    test_task="coverage ${test_task} coverageReport coverageAggregate coveralls"
+    test_task="coverage ${test_task} coverageReport coverageAggregate"
   fi
 
   echo "sbt -J-Xmx2048m ++${scala_version}! -v clean ${test_task}"

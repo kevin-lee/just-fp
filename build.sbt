@@ -85,7 +85,7 @@ lazy val core = (project in file("core"))
         case "2.12" =>
           List("com.lihaoyi" % "ammonite" % "2.3.8-58-aa8b2ab1" % Test cross CrossVersion.full)
         case "2.13" =>
-          List("com.lihaoyi" % "ammonite" % "2.3.8-65-0f0d597f" % Test cross CrossVersion.full)
+          List("com.lihaoyi" % "ammonite" % "2.5.9" % Test cross CrossVersion.full)
         case _      =>
           Seq.empty[ModuleID]
       }),
@@ -102,10 +102,16 @@ lazy val core = (project in file("core"))
       (scalaBinaryVersion.value match {
         case "2.10"                   =>
           task(Seq.empty[File])
-        case "2.11" | "2.12" | "2.13" =>
+        case "2.11" | "2.12" =>
           task {
             val file = (Test / sourceManaged).value / "amm.scala"
             IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
+            List(file)
+          }
+        case "2.13" =>
+          task {
+            val file = (Test / sourceManaged).value / "amm.scala"
+            IO.write(file, """object amm extends App { ammonite.AmmoniteMain.main(args) }""")
             List(file)
           }
         case _                        =>
@@ -193,7 +199,7 @@ lazy val props =
   new {
 
     val DottyVersions       = List("3.0.0")
-    val ProjectScalaVersion = "2.13.3"
+    val ProjectScalaVersion = "2.13.10"
 
     val removeDottyIncompatible: ModuleID => Boolean =
       m =>
@@ -206,7 +212,7 @@ lazy val props =
       (List(
         "2.11.12",
         "2.12.12",
-        "2.13.3"
+        "2.13.10"
       ) ++ DottyVersions).distinct
 
     val GitHubUsername = "Kevin-Lee"
