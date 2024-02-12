@@ -211,11 +211,11 @@ object MonoidSpec extends Properties {
     )
   )
 
-  def testMonoidFunction[A : Monoid : Equal](name: String, monoid: A)(f: (Monoid[A], A) => Boolean): Result = {
+  def testMonoidFunction[A : Monoid](name: String, monoid: A)(f: (Monoid[A], A) => Boolean): Result = {
     Result.diffNamed(s"=== $name Not true ===", Monoid[A], monoid)(f)
   }
 
-  def propertyTestMonoidFunction[A : Monoid : Equal](name: String, genA: Gen[A])(f: (Monoid[A], A) => Boolean): Property = for {
+  def propertyTestMonoidFunction[A : Monoid](name: String, genA: Gen[A])(f: (Monoid[A], A) => Boolean): Property = for {
     monoid <- genA.log("monoid")
   } yield {
     Result.diffNamed(s"=== $name Not false ===", Monoid[A], monoid)(f)
