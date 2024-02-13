@@ -13,7 +13,7 @@ trait EqualSyntax {
     new EqualOps(eqLeft)
 }
 object EqualSyntax {
-  final class EqualOps[A] private[syntax] (private val eqLeft: A) extends AnyVal {
+  final class EqualOps[A](private val eqLeft: A) extends AnyVal {
     def ===(eqRight: A)(implicit E: Equal[A]): Boolean =
       E.equal(eqLeft, eqRight)
     def !==(eqRight: A)(implicit E: Equal[A]): Boolean =
