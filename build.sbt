@@ -20,8 +20,6 @@ ThisBuild / licenses := props.licenses
 
 ThisBuild / resolvers += props.SonatypeSnapshots
 
-ThisBuild / resolvers += "sonatype-snapshots" at s"https://${props.SonatypeCredentialHost}/content/repositories/snapshots"
-
 libraryDependencies := (
   if (isScala3(scalaVersion.value))
     libraryDependencies
