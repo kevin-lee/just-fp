@@ -12,15 +12,17 @@ jobs:
       matrix:
         scala:
           - { version: "2.13.10", binary-version: "2.13", java-version: "11" }
+        node:
+          - { version: "18.13.0" }
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.scala.java-version }}
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
-          node-version: '14.4.0'
+          node-version: ${{ matrix.node.version }}
           registry-url: 'https://registry.npmjs.org'
 
       - name: Cache SBT
@@ -52,6 +54,7 @@ jobs:
             -J-Xmx2048m \
             ++${{ matrix.scala.version }}! \
             clean \
+            docs/clean \
             docs/mdoc \
             docs/docusaurGenerateAlgoliaConfigFile \
             docs/docusaurGenerateGoogleAnalyticsConfigFile \
