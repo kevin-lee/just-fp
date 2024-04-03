@@ -29,9 +29,8 @@ libraryDependencies := (
     libraryDependencies.value
 )
 
-lazy val core = (project in file("core"))
+lazy val core = module("core")
   .settings(
-    name := prefixedProjectName("core"),
     semanticdbEnabled := false,
     description := "Just FP Lib - Core",
     crossScalaVersions := props.CrossScalaVersions,
@@ -250,3 +249,12 @@ def prefixedProjectName(name: String) =
   s"${props.ProjectName}${if (name.isEmpty) "" else s"-$name"}"
 
 def isScala3(scalaVersion: String): Boolean = scalaVersion.startsWith("3.")
+
+def module(projectName: String) = {
+  val prefixedName = prefixedProjectName(projectName)
+  Project(projectName, file(s"modules/$prefixedName"))
+    .settings(
+      name := prefixedName,
+    )
+    .settings(mavenCentralPublishSettings)
+}
