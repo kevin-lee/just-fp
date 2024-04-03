@@ -1,9 +1,11 @@
 ---
+sidebar_position: 1
 id: 'getting-started'
 title: 'Getting Started'
+slug: '/'
 ---
 
-## ![](../img/just-fp-logo-64x64.png) just-fp
+## ![](/img/just-fp-logo-64x64.png) just-fp
 
 [![Build Status](https://github.com/Kevin-Lee/just-fp/workflows/Build-All/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions?workflow=Build-All)
 [![Release Status](https://github.com/Kevin-Lee/just-fp/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/just-fp/actions?workflow=Release)
