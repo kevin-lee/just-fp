@@ -199,7 +199,7 @@ lazy val props =
   new {
 
     val DottyVersions       = List("3.0.0")
-    val ProjectScalaVersion = "2.13.10"
+    val ProjectScalaVersion = "2.13.11"
 
     val SonatypeCredentialHost = "s01.oss.sonatype.org"
     val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
