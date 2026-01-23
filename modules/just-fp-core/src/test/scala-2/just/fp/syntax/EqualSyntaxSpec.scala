@@ -43,8 +43,7 @@ object EqualSyntaxSpec extends Properties {
   }
 
   def testNotDoubleEquals[A: Equal](gen: Gen[(A, A)]): Property = for {
-    xyPair <- gen.log("(x, y)")
-    (x, y) = xyPair
+    (x, y) <- gen.log("(x, y)")
   } yield {
     Result.diff(x, y)(_ !== _)
   }
