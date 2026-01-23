@@ -8,7 +8,7 @@ addSbtPlugin("org.scoverage"   % "sbt-scoverage"   % "2.0.8")
 addSbtPlugin("org.scalameta"   % "sbt-mdoc"        % "2.3.2")
 addSbtPlugin("io.kevinlee"     % "sbt-docusaur"    % "0.13.0")
 
-val sbtDevOopsVersion = "2.24.0"
+val sbtDevOopsVersion = "3.3.2"
 addSbtPlugin("io.kevinlee" % "sbt-devoops-scala"     % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-sbt-extra" % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-github"    % sbtDevOopsVersion)

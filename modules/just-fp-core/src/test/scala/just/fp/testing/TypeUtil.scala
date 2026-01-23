@@ -8,6 +8,9 @@ import scala.reflect.ClassTag
   */
 object TypeUtil {
 
-  def getRuntimeClass[A: ClassTag](a: A): Class[_] = implicitly[ClassTag[A]].runtimeClass
+  def getRuntimeClass[A: ClassTag](a: A): Class[_] = {
+    val _ = a
+    implicitly[ClassTag[A]].runtimeClass
+  }
 
 }

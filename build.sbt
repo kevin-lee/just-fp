@@ -82,9 +82,9 @@ lazy val core = module("core")
         case "2.11" =>
           List("com.lihaoyi" % "ammonite" % "1.6.7-2-c28002d" % Test cross CrossVersion.full)
         case "2.12" =>
-          List("com.lihaoyi" % "ammonite" % "2.3.8-58-aa8b2ab1" % Test cross CrossVersion.full)
+          List("com.lihaoyi" % "ammonite" % "3.0.7" % Test cross CrossVersion.full)
         case "2.13" =>
-          List("com.lihaoyi" % "ammonite" % "2.5.9" % Test cross CrossVersion.full)
+          List("com.lihaoyi" % "ammonite" % "3.0.7" % Test cross CrossVersion.full)
         case _ =>
           Seq.empty[ModuleID]
       }),
@@ -95,19 +95,19 @@ lazy val core = module("core")
           .value
           .filterNot(props.removeDottyIncompatible)
       } else
-        (libraryDependencies).value
+        libraryDependencies.value
     ),
     Test / sourceGenerators +=
       (scalaBinaryVersion.value match {
         case "2.10" =>
           task(Seq.empty[File])
-        case "2.11" | "2.12" =>
+        case "2.11" =>
           task {
             val file = (Test / sourceManaged).value / "amm.scala"
             IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
             List(file)
           }
-        case "2.13" =>
+        case "2.12" | "2.13" =>
           task {
             val file = (Test / sourceManaged).value / "amm.scala"
             IO.write(file, """object amm extends App { ammonite.AmmoniteMain.main(args) }""")
@@ -198,7 +198,7 @@ lazy val justFp = (project in file("."))
 lazy val props =
   new {
 
-    val DottyVersions       = List("3.0.0")
+    val DottyVersions       = List("3.3.4")
     val ProjectScalaVersion = "2.13.11"
 
     val SonatypeCredentialHost = "s01.oss.sonatype.org"
@@ -218,8 +218,8 @@ lazy val props =
     val CrossScalaVersions: Seq[String] =
       (List(
         "2.11.12",
-        "2.12.12",
-        "2.13.10"
+        "2.12.18",
+        "2.13.11"
       ) ++ DottyVersions).distinct
 
     val GitHubUsername = "Kevin-Lee"
