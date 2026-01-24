@@ -18,8 +18,6 @@ ThisBuild / scmInfo :=
   ).some
 ThisBuild / licenses := props.licenses
 
-ThisBuild / resolvers += props.SonatypeSnapshots
-
 libraryDependencies := (
   if (isScala3(scalaVersion.value))
     libraryDependencies
@@ -190,7 +188,6 @@ lazy val justFp = (project in file("."))
       s"*/target/scala-*/${name.value}*.jar",
     ),
   )
-  .settings(mavenCentralPublishSettings)
   .settings(noPublish)
   .settings(noDoc)
   .aggregate(core)
@@ -200,11 +197,6 @@ lazy val props =
 
     val DottyVersions       = List("3.3.4")
     val ProjectScalaVersion = "2.13.11"
-
-    val SonatypeCredentialHost = "s01.oss.sonatype.org"
-    val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
-
-    val SonatypeSnapshots = "sonatype-snapshots" at s"https://$SonatypeCredentialHost/content/repositories/snapshots"
 
     val licenses = List(License.MIT)
 
@@ -238,12 +230,6 @@ lazy val libs =
     )
   }
 
-lazy val mavenCentralPublishSettings: SettingsDefinition = List(
-  /* Publish to Maven Central { */
-  sonatypeCredentialHost := props.SonatypeCredentialHost,
-  sonatypeRepository := props.SonatypeRepository,
-  /* } Publish to Maven Central */
-)
 
 def prefixedProjectName(name: String) =
   s"${props.ProjectName}${if (name.isEmpty) "" else s"-$name"}"
@@ -256,5 +242,4 @@ def module(projectName: String) = {
     .settings(
       name := prefixedName,
     )
-    .settings(mavenCentralPublishSettings)
 }
