@@ -187,6 +187,7 @@ lazy val justFp = (project in file("."))
     devOopsPackagedArtifacts := List(
       s"*/target/scala-*/${name.value}*.jar",
     ),
+    libraryDependencies := filterLibraries(scalaVersion.value, libraryDependencies.value),
   )
   .settings(noPublish)
   .settings(noDoc)
@@ -196,7 +197,7 @@ lazy val props =
   new {
 
     val DottyVersions       = List("3.3.4")
-    val ProjectScalaVersion = "2.13.11"
+    val ProjectScalaVersion = "2.13.16"
 
     val licenses = List(License.MIT)
 
@@ -211,7 +212,7 @@ lazy val props =
       (List(
         "2.11.12",
         "2.12.18",
-        "2.13.11"
+        "2.13.16"
       ) ++ DottyVersions).distinct
 
     val GitHubUsername = "Kevin-Lee"
@@ -230,7 +231,6 @@ lazy val libs =
     )
   }
 
-
 def prefixedProjectName(name: String) =
   s"${props.ProjectName}${if (name.isEmpty) "" else s"-$name"}"
 
@@ -241,5 +241,14 @@ def module(projectName: String) = {
   Project(projectName, file(s"modules/$prefixedName"))
     .settings(
       name := prefixedName,
+      libraryDependencies := filterLibraries(scalaVersion.value, libraryDependencies.value),
     )
+}
+
+def filterLibraries(scalaVersion: String, libraryDependencies: Seq[ModuleID]) = {
+  if (scalaVersion.startsWith("2.11"))
+    libraryDependencies
+      .filter(lib => lib.organization != "org.scoverage" && lib.organization != "org.wartremover")
+  else
+    libraryDependencies
 }
